@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+   <extensionContent id="org.jeelee.filenamager.tutorials" name="FileManager" 
+   alt-style="css/whatsnew.properties" style="css/whatsnew.css" path="tutorials/@">
+      <group id="FileManager-group" style-id="content-group">
+         <link label="file manager" 
+        url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.jeelee.filemanager/tutorials.htm"
+                                          id="FileManager-tutorials" 
+                                          style-id="content-link">
+            <text>查看使用帮助</text>
+         </link>
+      </group>
+   </extensionContent>
+</introContent>

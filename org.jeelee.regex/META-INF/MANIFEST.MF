@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Regex
+Bundle-SymbolicName: org.jeelee.regex; singleton:=true
+Bundle-Version: 1.0.1.qualifier
+Bundle-Activator: org.jeelee.regex.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.jeelee.core;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.jeelee.regex.generator,
+ org.jeelee.regex.manager,
+ org.jeelee.regex.utils

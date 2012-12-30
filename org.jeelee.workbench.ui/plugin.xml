@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true">
+         <run
+               class="org.jeelee.workbench.ui.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%default.pespective"
+            class="org.jeelee.workbench.ui.Perspective"
+            id="org.jeelee.workbench.ui.perspective">
+      </perspective>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.exportWizards">
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+   </extension>
+ 
+   
+   <extension
+        id="product"
+        point="org.eclipse.core.runtime.products">
+     <product
+           application="org.jeelee.workbench.ui.application"
+           name="org.jeelee.workbench.ui.product">
+         <property
+              name="appName"
+              value="org.jeelee.workbench.ui.product">
+        </property>
+        <property
+              name="aboutImage"
+              value="icons/icon.png">
+        </property>
+        <property
+              name="aboutText"
+              value="%aboutText">
+        </property>
+        <property
+              name="startupForegroundColor"
+              value="000000">
+        </property>
+        <property
+              name="startupMessageRect"
+              value="7,242,445,20">
+        </property>
+        <property
+              name="startupProgressRect"
+              value="5,265,445,15">
+        </property>
+        <property
+              name="windowImages"
+              value="icons/alt_window_16.gif">
+        </property>
+        <property
+              name="preferenceCustomization"
+              value="plugin_customization.ini">
+        </property>
+        
+         <property
+            name="introBrandingImage"
+            value="product:icons/icon.png"/>
+      	<property
+            name="introTitle"
+            value="%product.name"/>
+     </product>
+  </extension>
+   
+   <extension
+         point="org.eclipse.ui.intro">
+      <introProductBinding
+            introId="org.eclipse.ui.intro.universal"
+            productId="org.jeelee.workbench.ui.product">
+      </introProductBinding>
+  </extension>
+   <!--
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true">
+      </toc>
+      <toc
+            file="tocconcepts.xml">
+      </toc>
+      <toc
+            file="tocgettingstarted.xml">
+      </toc>
+      <toc
+            file="tocreference.xml">
+      </toc>
+      <toc
+            file="tocsamples.xml">
+      </toc>
+      <toc
+            file="toctasks.xml">
+      </toc>
+     
+   </extension>
+    -->
+
+</plugin>

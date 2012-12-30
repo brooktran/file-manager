@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+      
+	<extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="org.jeelee.core.ui.views.ConsoleFactory"
+            label="%system.console">
+      </consoleFactory>
+   </extension>
+ <extension
+       point="org.eclipse.ui.views">
+    <view
+          allowMultiple="false"
+          category="org.eclipse.ui"
+          class="org.eclipse.ui.ExtensionFactory:progressView"
+          icon="icons/progress_view.png"
+          id="org.eclipse.ui.views.ProgressView"
+          name="%progress.view"
+          restorable="true">
+    </view>
+ </extension>
+</plugin>

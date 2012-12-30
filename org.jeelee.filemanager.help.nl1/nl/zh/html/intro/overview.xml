@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+   <extensionContent id="FileManager" name="FileManager" alt-style="css/swt.properties" style="css/overview.css" path="overview/@">
+      <group id="content-group" style-id="content-group">
+         <link label="Jeelee FileManager" style-id="content-link" 
+         url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.jeelee.filemanager/guide/intro/filemanager_overview.htm"
+                                          id="FileManager" >
+            <text>方便的本地/网络文件管理工具</text>
+         </link>
+         <anchor id="FileManager"/>
+      </group>
+   </extensionContent>
+</introContent>

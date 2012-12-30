@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Export-Package: org.eclipse.nebula.jface.gridviewer,
+ org.eclipse.nebula.widgets.grid,
+ org.eclipse.nebula.widgets.grid.internal,
+ org.jeelee.core,
+ org.jeelee.event,
+ org.jeelee.ui.internal,
+ org.jeelee.ui.preference,
+ org.jeelee.ui.viewers.cell.editors,
+ org.jeelee.utils
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources;bundle-version="3.7.101",
+ org.apache.commons.logging;bundle-version="1.0.4",
+ pinyin4j;bundle-version="2.5.0";resolution:=optional,
+ org.eclipse.jface.text;bundle-version="3.7.2",
+ org.junit
+Bundle-Vendor: org.jeelee
+Bundle-ActivationPolicy: lazy
+Bundle-Version: 2.1.0.201208282112
+Bundle-Name: Core
+Bundle-Activator: org.jeelee.core.JeeleeActivator
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.jeelee.core;singleton:=true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: .
+

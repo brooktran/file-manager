@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.jeelee.filemanager.ui.Perspective"
+            icon="icons/folder-2.png"
+            id="org.jeelee.filemanager.perspective"
+            name="%perspective.name">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.jeelee.filemanager"
+            name="%category.name">
+      </category>
+      <view
+            category="org.jeelee.filemanager"
+            class="org.jeelee.filemanager.ui.views.GlobalFileExplorerView"
+            icon="icons/house.png"
+            id="org.jeelee.filemanager.views.file.explorer.view"
+            name="%file.explorer.view"
+            restorable="true">
+      </view>
+      <view
+            category="org.jeelee.filemanager"
+            class="org.jeelee.filemanager.ui.views.TypeFilterView"
+            icon="icons/type.png"
+            id="org.jeelee.filemanager.views.type.filter.view"
+            name="%type.filter.view"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.jeelee.filemanager.ui.editors.FolderEditor"
+            default="false"
+            icon="icons/folder-2.png"
+            id="org.jeelee.filemanager.directory.editor"
+            name="%directory.editor">
+      </editor>
+   </extension>>
+   
+	<extension
+	    	point="org.eclipse.ui.intro.configExtension">
+		 <configExtension
+		   configId="org.eclipse.ui.intro.universalConfig"
+		   content="$nl$/html/intro/overview.xml">
+		 </configExtension>
+		 
+		<configExtension
+   			configId="org.eclipse.ui.intro.universalConfig"
+			content="$nl$/html/intro/tutorials.xml">
+		</configExtension>
+		<configExtension
+   			configId="org.eclipse.ui.intro.universalConfig"
+			content="$nl$/html/intro/whatsnew.xml">
+		</configExtension>
+	 
+	</extension>
+
+
+
+
+<extension
+        id="product"
+        point="org.eclipse.core.runtime.products">
+     <product
+           application="org.jeelee.workbench.ui.application"
+           name="FileTools">
+         <property
+              name="appName"
+              value="FileTools">
+        </property>
+        <property
+              name="aboutImage"
+              value="platform:/plugin/org.jeelee.workbench.ui/icons/icon.png">
+        </property>
+        <property
+              name="aboutText"
+              value="%aboutText">
+        </property>
+        <property
+              name="startupForegroundColor"
+              value="000000">
+        </property>
+        <property
+              name="startupMessageRect"
+              value="7,242,445,20">
+        </property>
+        <property
+              name="startupProgressRect"
+              value="5,265,445,15">
+        </property>
+        <property
+              name="windowImages"
+              value="icons/alt_window_16.gif">
+        </property>
+        <property
+              name="preferenceCustomization"
+              value="plugin_customization.ini">
+        </property>
+        
+         <property
+            name="introBrandingImage"
+            value="product:icons/icon.png"/>
+      	<property
+            name="introTitle"
+            value="%product.name"/>
+     </product>
+     
+  </extension>
+  <!--
+<extension
+      point="org.eclipse.help.toc">
+   <toc
+         file="toc.xml"
+         primary="true">
+   </toc>
+   <toc
+         file="html/help/tocconcepts.xml">
+   </toc>
+   <toc
+         file="html/help/tocgettingstarted.xml">
+   </toc>
+   <toc
+         file="html/help/tocreference.xml">
+   </toc>
+   <toc
+         file="html/help/tocsamples.xml">
+   </toc>
+   <toc
+         file="html/help/toctasks.xml">
+   </toc>
+</extension>
+-->
+</plugin>

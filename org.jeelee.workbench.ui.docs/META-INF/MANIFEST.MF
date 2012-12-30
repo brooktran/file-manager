@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: workbench.ui.docs
+Bundle-SymbolicName: org.jeelee.workbench.ui.docs;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.jeelee.workbench.ui;bundle-version="3.1.0"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

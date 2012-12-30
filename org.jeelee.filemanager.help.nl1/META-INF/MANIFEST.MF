@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: filemanager nls
+Bundle-SymbolicName: org.jeelee.filemanager.help.nl1;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.jeelee.filemanager;bundle-version="1.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: $nl$/,
+ .
