@@ -42,7 +42,6 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 	private static final Integer SYSTEM_TYPE_DESCRIPTION = 5;
 	//	private static final Integer ABSOLUTE_PATH = 6;
 
-
 	private FileType fileType;
 
 //	public static final long UNRESOLVE_SIZE= -1;
@@ -403,11 +402,6 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 	private boolean isRegularFile(FileDelegate file) {
 		return file!=null && file.getSource()!=null && !file.toString().equals(ROOT);
 	}
-
-	public FileInfo getFileInfo() {
-		return JeeleeFileSystem.getFileInfo(toFile());
-	}
-
 
 	public boolean isDirectory() {
 		return isDirectory(source);

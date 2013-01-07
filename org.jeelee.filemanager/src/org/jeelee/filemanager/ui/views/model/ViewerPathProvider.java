@@ -10,12 +10,13 @@
  */
 package org.jeelee.filemanager.ui.views.model;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.jeelee.filemanager.ui.operation.PathProvider;
+import org.jeelee.filemanager.core.FileDelegate;
+import org.jeelee.filemanager.core.operation.PathProvider;
 
 /**
  * <B>ViewerFileExplorer</B>
@@ -26,45 +27,25 @@ import org.jeelee.filemanager.ui.operation.PathProvider;
 public class ViewerPathProvider implements PathProvider{
 
 	private ISelectionProvider	selectionProvider;
-
-	@Override
-	public String[] getSource() {
-		IStructuredSelection selection =(IStructuredSelection) selectionProvider.getSelection(); 
-		return null;
-	}
-	@Override
-	public String[] getTarget() {
-		return null;
-	}
-
+	
 	public ViewerPathProvider(Viewer	viewer){
 		selectionProvider= viewer;
 	}
 	
-	
 	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionProvider.addSelectionChangedListener(listener);
+	public FileDelegate[] getSource() {
+		IStructuredSelection selection =(IStructuredSelection) selectionProvider.getSelection(); 
+		FileDelegate[] files = new FileDelegate[selection.size()];
+		Iterator<?> it = selection.iterator();
+		for(int i=0;i<files.length && it.hasNext();i++){
+			files[i] = (FileDelegate) it.next();
+		}
+		return files;
+	}
+	@Override
+	public FileDelegate[] getTarget() {
+		return null;
 	}
 
-	@Override
-	public ISelection getSelection() {
-		return selectionProvider.getSelection();
-	}
-
-	@Override
-	public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
-		selectionProvider.removeSelectionChangedListener(listener);
-	}
-
-	@Override
-	public void setSelection(ISelection selection) {
-		selectionProvider.setSelection(selection);
-	}
-	@Override
-	public void setSelectionProvider(ISelectionProvider selectionProvider) {
-		this.selectionProvider = selectionProvider;
-	}
 
 }

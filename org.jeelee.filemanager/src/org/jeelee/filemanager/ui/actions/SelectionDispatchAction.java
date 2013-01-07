@@ -20,7 +20,7 @@ public abstract class SelectionDispatchAction extends Action implements ISelecti
 
 	public ISelection getSelection() {
 		if (fileExplorer.getPathProvider() != null) {
-			return fileExplorer.getPathProvider().getSelection();
+			return fileExplorer.getSelection();
 		} else {
 			return null;
 		}

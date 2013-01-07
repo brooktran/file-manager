@@ -1,5 +1,6 @@
 package org.jeelee.filemanager.core;
 
+@Deprecated
 public class FileInfo{
 	private String drive ;
 	private String full_path;

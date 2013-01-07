@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -48,12 +49,12 @@ import org.jeelee.event.AbstractBean;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
 import org.jeelee.filemanager.core.filters.KeyWordFilter;
+import org.jeelee.filemanager.core.operation.PathProvider;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
 import org.jeelee.filemanager.ui.actions.FileEditorActionGroupHelper;
 import org.jeelee.filemanager.ui.actions.RefreshAction;
 import org.jeelee.filemanager.ui.dialog.FilterDialog;
-import org.jeelee.filemanager.ui.operation.PathProvider;
 import org.jeelee.filemanager.ui.views.model.FileDelegateCellModifier;
 import org.jeelee.filemanager.ui.views.model.FileDelegateLabelProvider;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
@@ -605,6 +606,29 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	public void removePropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		getBean().removePropertyChangeListener(propertyName, listener);
+	}
+
+
+	
+	
+	
+	
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		tableViewer.addSelectionChangedListener(listener);
+	}
+
+
+	@Override
+	public ISelection getSelection() {
+		return tableViewer.getSelection();
+	}
+
+
+	@Override
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		tableViewer.removeSelectionChangedListener(listener);
 	}
 }
 

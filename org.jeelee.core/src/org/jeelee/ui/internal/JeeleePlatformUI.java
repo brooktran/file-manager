@@ -7,9 +7,9 @@ import org.jeelee.utils.AppLogging;
 import org.jeelee.utils.Sleak;
 
 public class JeeleePlatformUI {
-
+	private static Display display;
+	
 	public static Display createDisplay() {
-		Display display;
 		if(AppLogging.isDebugLeaking()){
 			DeviceData data = new DeviceData();
 		    data.tracking = true;
@@ -19,6 +19,10 @@ public class JeeleePlatformUI {
 		}else {
 			display =PlatformUI.createDisplay();
 		}
+		return display;
+	}
+	
+	public static Display getDisplay() {
 		return display;
 	}
 

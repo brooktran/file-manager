@@ -15,7 +15,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jeelee.filemanager.core.AbstractFileFilter;
 import org.jeelee.filemanager.core.CompositeFileFilter;
 import org.jeelee.filemanager.core.FileDelegate;
 

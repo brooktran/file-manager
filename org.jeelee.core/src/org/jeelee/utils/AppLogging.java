@@ -15,17 +15,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.jeelee.core.JeeleeActivator;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.jeelee.ui.internal.JeeleePlatformUI;
 
 
 
@@ -41,28 +41,36 @@ public class AppLogging {
 	private static boolean debug;
 	private static boolean leaking;
 	
-	static{
-		IPreferenceStore p= JeeleeActivator.getDefault().getPreferenceStore();
-		debug=p.getBoolean(PreferenceConstant.TESTING);
-		leaking=p.getBoolean(PreferenceConstant.LEAKING);
-	}
+//	static{
+//		IPreferenceStore p= JeeleeActivator.getDefault().getPreferenceStore();
+//		debug=p.getBoolean(PreferenceConstant.TESTING);
+//		leaking=p.getBoolean(PreferenceConstant.LEAKING);
+//	}
 
 	public static void handleException(Throwable e) {
 		if(debug){
 			e.printStackTrace();
 		}
-		JOptionPane.showMessageDialog(null, e.getMessage());
 		
+		ErrorDialog.openError(JeeleePlatformUI.getDisplay().getActiveShell(), "error", e.getMessage(), Status.OK_STATUS);
 		try {
 			FileWriter fw=new FileWriter(new File("app.log"), true);
 			fw.write(Calendar.getInstance().toString()+"\n");
 			PrintWriter pw=new PrintWriter(fw,true);
 			e.printStackTrace(pw);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			throw new UndeclaredThrowableException(e1);
 		}
 	}
 
+	
+	public static void main(String[] args) {
+		try {
+			throw new Exception("dd");
+		} catch (Exception e) {
+			handleException(e);
+		}
+	}
 	
 	
 	public static boolean isDebug() {

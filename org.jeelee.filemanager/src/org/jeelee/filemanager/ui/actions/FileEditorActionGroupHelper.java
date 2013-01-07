@@ -4,8 +4,8 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.jeelee.filemanager.core.FileDelegate;
-import org.jeelee.filemanager.ui.editors.FolderEditor;
 import org.jeelee.filemanager.ui.editors.FileResourceInput;
+import org.jeelee.filemanager.ui.editors.FolderEditor;
 
 public class FileEditorActionGroupHelper extends FileExplorerActionGroupHelper{
 	private FolderEditor editor;
@@ -25,12 +25,12 @@ public class FileEditorActionGroupHelper extends FileExplorerActionGroupHelper{
 		}
 		FileDelegate file= (FileDelegate)element;
 		
-		
-		if(file.isVisitable()){
+		if(file.isVisitable()){//open in editor
 			FileResourceInput input = new FileResourceInput(file, false);
 			editor.updateInput(input);
-		} else {
+		} else {// try open file
 //			findAction(OpenAction.ID).run(selection);
+			
 		}
 	}
 	@Override

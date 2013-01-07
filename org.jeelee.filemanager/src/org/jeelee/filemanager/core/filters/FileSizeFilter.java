@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jeelee.filemanager.core.AbstractFileFilter;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.Scope;
 

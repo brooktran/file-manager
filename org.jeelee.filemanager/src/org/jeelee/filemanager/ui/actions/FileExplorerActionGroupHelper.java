@@ -123,7 +123,7 @@ public abstract class FileExplorerActionGroupHelper implements ISelectionProvide
 
 	@Override
 	public ISelection getSelection() {
-		return fileExplorer.getPathProvider().getSelection();
+		return fileExplorer.getSelection();
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public abstract class FileExplorerActionGroupHelper implements ISelectionProvide
 
 
 	public IAction findAction(String id) {
-		return (SelectionDispatchAction) actionSet.findAction(id);
+		return actionSet.findAction(id);
 	}
 	
 }

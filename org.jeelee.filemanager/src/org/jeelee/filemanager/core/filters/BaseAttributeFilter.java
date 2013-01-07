@@ -10,7 +10,6 @@
  */
 package org.jeelee.filemanager.core.filters;
 
-import org.jeelee.filemanager.core.AbstractFileFilter;
 import org.jeelee.filemanager.core.FileDelegate;
 
 /**

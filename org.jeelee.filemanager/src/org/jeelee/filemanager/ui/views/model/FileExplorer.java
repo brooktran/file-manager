@@ -11,12 +11,13 @@
 package org.jeelee.filemanager.ui.views.model;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchSite;
 import org.jeelee.event.PropertySupport;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
-import org.jeelee.filemanager.ui.operation.PathProvider;
+import org.jeelee.filemanager.core.operation.PathProvider;
 
 /**
  * <B>FileView</B>
@@ -24,7 +25,7 @@ import org.jeelee.filemanager.ui.operation.PathProvider;
  * @author Brook Tran. Email: <a href="mailto:Brook.Tran.C@gmail.com">Brook.Tran.C@gmail.com</a>
  * @since org.jeelee.filemanager 2012-8-14 created
  */
-public interface FileExplorer  extends PropertySupport{
+public interface FileExplorer  extends PropertySupport ,ISelectionProvider{
 	String REFRESHED_PROPERTY="refreshed";
 	
 	FileDelegate getDefaultSelection();
@@ -37,6 +38,7 @@ public interface FileExplorer  extends PropertySupport{
 	void rename();
 	void refresh();
 	
+	@Override
 	void setSelection(ISelection selection);
 	FileFilterDelegate getFilter();
 

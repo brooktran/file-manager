@@ -70,25 +70,13 @@ public class FileUtils {
 					Path newTarget = targetPath;
 					
 					for(int i=1;Files.exists(newTarget);i++){
-						newTarget = target.getSource().resolve(createNewFilename(targetPath,i));
+						newTarget = target.getSource().resolve(NameGenerator.createNewFilename(targetPath,i));
 					}
 					targetPath=newTarget;
 				}
 			}
 			Files.move(sourcePath, targetPath);
 		} 		
-	}
-
-	private static String createNewFilename(Path targetPath, int factor) {
-		String name = targetPath.getFileName().toString();
-		int p =name.lastIndexOf(".");
-		if(p==-1){
-			name = name+"("+factor+")";
-		}else {
-			name =name.substring(0, p)+"("+factor+")"+name.substring(p);
-		}
-		System.out.println(name);
-		return name;
 	}
 
 	private static void delete(Path targetPath) throws IOException {

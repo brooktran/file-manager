@@ -61,6 +61,7 @@ public class Messages {
 	public static final String UPDATE = "update";
 	public static final String PREPARE_DIRECTORY = "prepare.directory";
 	public static final String RENAME = "rename";
+	public static final String	COPY_FILE_PATH	= "copy.file.path";
 	public static final String	COPY_FILE_NAME	=  "copy.file.name";
 	public static final String	MOVE	= "file.move";
 	public static final String	REPLACE	= "replace";
@@ -114,6 +115,26 @@ public class Messages {
 	//	public static String AdapterFactory_ImageDriver ="AdapterFactory_FetchingContent" ;
 	//	public static String AdapterFactory_ImageFolder="AdapterFactory_FetchingContent" ;
 	//	public static String AdapterFactory_ImageMp3="AdapterFactory_FetchingContent" ;
+
+
+
+
+	public static final String	CONCURRENT	= "concurrent";
+	public static final String	ONE_AFTER_ONE	= "one.after.one";
+
+
+
+
+	public static final String	OPEN_MUTIL_FILES_TIPS	= "open.mutil.files.tips";
+
+
+
+
+	public static final String	DONT_ASK_ME_AGAIN	= "dont.ask.me.again";
+
+
+
+
 
 
 

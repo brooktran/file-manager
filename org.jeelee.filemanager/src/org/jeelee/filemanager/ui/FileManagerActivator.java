@@ -1,8 +1,12 @@
 package org.jeelee.filemanager.ui;
 
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.jeelee.filemanager.ui.preferences.FileManagerPreferencePage;
+import org.jeelee.filemanager.ui.preferences.IPreferenceConstants;
 import org.jeelee.utils.PluginResources;
 import org.jeelee.utils.SharedResources;
 import org.osgi.framework.BundleContext;
@@ -25,7 +29,15 @@ public class FileManagerActivator extends AbstractUIPlugin {
 
 	@Override
 	protected void initializeDefaultPluginPreferences() {
-		new FileManagerPreferencePage();
+		IPreferenceStore store =FileManagerActivator.getDefault()
+				.getPreferenceStore();
+		
+		/// check if the preference has been initiated
+		String osname = System.getProperty(IPreferenceConstants.OS_NAME, "").toLowerCase();
+		if(store.getString(IPreferenceConstants.OS_NAME).equals(osname) && store.getBoolean(IPreferenceConstants.INITED_OS_COMMAND)){
+			return;
+		}
+		FileManagerPreferencePage.initializeDefaults();
 	}
 	
 	
@@ -55,5 +67,10 @@ public class FileManagerActivator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	public static IOperationHistory getOperationHistory() {
+		return PlatformUI.getWorkbench().getOperationSupport()
+				.getOperationHistory();
 	}
 }

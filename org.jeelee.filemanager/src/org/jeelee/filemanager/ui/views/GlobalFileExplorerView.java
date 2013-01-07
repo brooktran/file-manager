@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeNodeContentProvider;
@@ -37,11 +38,11 @@ import org.jeelee.event.AbstractBean;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.JeeleeFileSystem;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
+import org.jeelee.filemanager.core.operation.PathProvider;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
 import org.jeelee.filemanager.ui.actions.GlobalFileExplorerActionGroupHelper;
 import org.jeelee.filemanager.ui.dialog.FilterDialog;
-import org.jeelee.filemanager.ui.operation.PathProvider;
 import org.jeelee.filemanager.ui.views.model.FileDelegateCellModifier;
 import org.jeelee.filemanager.ui.views.model.FileDelegateLabelProvider;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
@@ -81,7 +82,6 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 		viewer.setCellModifier(new FileDelegateCellModifier(viewer));
 		viewer.setColumnProperties(new String[] {Messages.NAME});
 		viewer.setAutoExpandLevel(1);
-		pathProvider.setSelectionProvider(viewer);
 		
 		getSite().setSelectionProvider(viewer);
 		// Platform.getAdapterManager().registerAdapters(adapterFactory,
@@ -276,6 +276,26 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 	@Override
 	public FileFilterDelegate getFilter() {
 		return fileFilter;
+	}
+
+	
+	
+	
+	
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		viewer.addSelectionChangedListener(listener);
+	}
+
+	@Override
+	public ISelection getSelection() {
+		return viewer.getSelection();
+	}
+
+	@Override
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		viewer.removeSelectionChangedListener(listener);
 	}
 	
 }

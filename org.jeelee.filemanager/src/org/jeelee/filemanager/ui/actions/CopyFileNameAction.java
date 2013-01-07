@@ -2,9 +2,9 @@ package org.jeelee.filemanager.ui.actions;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.jeelee.filemanager.core.operation.CopyFileNameOperation;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
-import org.jeelee.filemanager.ui.operation.CopyFileNameOperation;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
 
 public class CopyFileNameAction extends UndoableAction {
@@ -18,7 +18,7 @@ public class CopyFileNameAction extends UndoableAction {
 
 	@Override
 	protected IUndoableOperation getOperation(IStructuredSelection selection) {
-		return new CopyFileNameOperation(fileExplorer.getPathProvider(),getText());
+		return new CopyFileNameOperation(fileExplorer.getPathProvider());
 	}
 
 }

@@ -44,7 +44,7 @@ public class FolderEditorHelper {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				final FileResourceInput input =new FileResourceInput(file,openInNewEditor);
-				FolderEditor editor = (FolderEditor) page.findEditor(input);
+				final FolderEditor editor = (FolderEditor) page.findEditor(input);
 				if(openInNewEditor || editor == null){
 					page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
 						@Override
@@ -57,8 +57,13 @@ public class FolderEditorHelper {
 						}
 					});
 				} else {
-					editor.updateInput(input);
-					page.bringToTop(editor);
+					page.getWorkbenchWindow().getShell().getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							editor.updateInput(input);
+							page.bringToTop(editor);
+						}
+					});
 				}
 				return Status.OK_STATUS;
 			}

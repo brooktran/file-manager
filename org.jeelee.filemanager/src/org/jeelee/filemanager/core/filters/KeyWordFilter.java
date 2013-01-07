@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.jeelee.filemanager.core.AbstractFileFilter;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.regex.utils.RegexBuilder;
 

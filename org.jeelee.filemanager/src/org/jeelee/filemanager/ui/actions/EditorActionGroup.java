@@ -26,14 +26,14 @@ public class EditorActionGroup extends RetrievableActionGroup{
 	
 	
 	protected void initialize(SelectionDispatchAction... actions ) {
-		ISelection selection= fileExplorer.getPathProvider().getSelection();
+		ISelection selection= fileExplorer.getSelection();
 		updateSelection(selection,actions);
-		addSelectionChangedListeners(fileExplorer.getPathProvider(),actions);
+		addSelectionChangedListeners(fileExplorer,actions);
 	}
 	
 	protected void removeSelectioinChangedListeners(ISelectionChangedListener... listeners) {
 		for(ISelectionChangedListener l:listeners){
-			fileExplorer.getPathProvider().removeSelectionChangedListener(l);
+			fileExplorer.removeSelectionChangedListener(l);
 		}
 	}
 
