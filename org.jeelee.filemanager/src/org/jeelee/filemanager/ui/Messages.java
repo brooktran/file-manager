@@ -125,12 +125,17 @@ public class Messages {
 
 
 
-	public static final String	OPEN_MUTIL_FILES_TIPS	= "open.mutil.files.tips";
+	public static final String	OPEN_MULTI_FILES_TIPS	= "open.multi.files.tips";
 
 
 
 
 	public static final String	DONT_ASK_ME_AGAIN	= "dont.ask.me.again";
+
+
+
+
+	public static final String	CLEAR	= "clear";
 
 
 

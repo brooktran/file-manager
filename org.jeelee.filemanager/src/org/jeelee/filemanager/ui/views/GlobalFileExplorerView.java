@@ -61,7 +61,6 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 	private AbstractBean bean;
 
 	public GlobalFileExplorerView() {
-		pathProvider = new ViewerPathProvider(viewer);
 		fileFilter = new FileFilterDelegate();//TODO get from preference
 		fileFilter.setDisplayFile(false);
 		fileFilter.addPropertyChangeListener(new PropertyChangeListener() {
@@ -83,6 +82,8 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 		viewer.setColumnProperties(new String[] {Messages.NAME});
 		viewer.setAutoExpandLevel(1);
 		
+		pathProvider = new ViewerPathProvider(viewer);
+
 		getSite().setSelectionProvider(viewer);
 		// Platform.getAdapterManager().registerAdapters(adapterFactory,
 		// FileDelegate.class);

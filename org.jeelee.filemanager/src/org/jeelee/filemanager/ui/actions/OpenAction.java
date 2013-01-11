@@ -11,7 +11,7 @@ import org.jeelee.filemanager.core.operation.OpenOperation;
 import org.jeelee.filemanager.core.operation.OpenOperation.ExecuteOrder;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
-import org.jeelee.filemanager.ui.PreferenceConstants;
+import org.jeelee.filemanager.ui.preferences.IPreferenceConstants;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
 import org.jeelee.utils.PluginResources;
 
@@ -35,20 +35,20 @@ public class OpenAction extends UndoableAction  {
 		if (selection.size() > 1) {
 			IPreferenceStore store = FileManagerActivator.getDefault()
 					.getPreferenceStore();
-			if(store.getString(PreferenceConstants.NEVER_PROMPT_ON_OPEN_MUTIL_FILES).equals(MessageDialogWithToggle.NEVER)){
-				int order = store.getDefaultInt(PreferenceConstants.MUTIL_FILE_EXECUTE_ORDER);
-				op.setOrder(order==0?ExecuteOrder.CONCURRENT:ExecuteOrder.ONE_AFTER_ONE);
+			if(store.getString(IPreferenceConstants.NEVER_PROMPT_ON_OPEN_MUTIL_FILES).equals(MessageDialogWithToggle.NEVER)){
+				boolean concurrent = store.getBoolean(IPreferenceConstants.MUTIL_FILE_ORDER_CURRENT);
+				op.setOrder(concurrent?ExecuteOrder.CONCURRENT:ExecuteOrder.ONE_AFTER_ONE);
 			}else {
 
-				MessageDialogWithToggle dialog = new MessageDialogWithToggle(getShell(), r.getString(Messages.OPEN), null, r.getString(Messages.OPEN_MUTIL_FILES_TIPS), MessageDialogWithToggle.QUESTION, getButtonLabels(), 0, r.getString(Messages.DONT_ASK_ME_AGAIN), false);
+				MessageDialogWithToggle dialog = new MessageDialogWithToggle(getShell(), r.getString(Messages.OPEN), null, r.getString(Messages.OPEN_MULTI_FILES_TIPS), MessageDialogWithToggle.QUESTION, getButtonLabels(), 0, r.getString(Messages.DONT_ASK_ME_AGAIN), false);
 				dialog.setPrefStore(store);
-				dialog.setPrefKey(PreferenceConstants.NEVER_PROMPT_ON_OPEN_MUTIL_FILES);
+				dialog.setPrefKey(IPreferenceConstants.NEVER_PROMPT_ON_OPEN_MUTIL_FILES);
 				int retVal =dialog.open();
-//				 dialog.getReturnCode();
 				if ( retVal== IDialogConstants.CANCEL_ID) {
 					return null;
 				}
 				op.setOrder(retVal==IDialogConstants.INTERNAL_ID?ExecuteOrder.CONCURRENT:ExecuteOrder.ONE_AFTER_ONE);
+				store.setValue(IPreferenceConstants.MUTIL_FILE_ORDER_CURRENT, retVal==IDialogConstants.INTERNAL_ID);
 			}
 
 		}
@@ -56,6 +56,6 @@ public class OpenAction extends UndoableAction  {
 	}
 	
 	private String[] getButtonLabels() {
-		return new String[]{r.getString(Messages.ONE_AFTER_ONE),r.getString(Messages.CONCURRENT),JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY)};
+		return new String[]{r.getString(Messages.CONCURRENT),r.getString(Messages.ONE_AFTER_ONE),JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY)};
 	}
 }

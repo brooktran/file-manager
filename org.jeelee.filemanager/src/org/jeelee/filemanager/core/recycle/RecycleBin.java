@@ -22,7 +22,7 @@ import java.util.Random;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.ui.FileManagerActivator;
-import org.jeelee.filemanager.ui.PreferenceConstants;
+import org.jeelee.filemanager.ui.preferences.IPreferenceConstants;
 import org.jeelee.utils.Pair;
 
 /**
@@ -52,7 +52,7 @@ public class RecycleBin {
 		// gets the name of the recycle bin
 		IPreferenceStore store = FileManagerActivator.getDefault()
 				.getPreferenceStore();
-		String name = store.getString(PreferenceConstants.RECYCLE_BIN_NAME);
+		String name = store.getString(IPreferenceConstants.RECYCLE_BIN_NAME);
 		if (name != null) {
 			recyclePath = name;
 		}		

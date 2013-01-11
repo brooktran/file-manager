@@ -57,7 +57,6 @@ public class OpenOperation extends FileSystemOperation{
 					case ONE_AFTER_ONE:
 						Process process =RuntimeExecutor.execute(runCommand, f);
 						process.waitFor();
-						System.out.println("OpenOperation.execute()");
 						break;
 					default:
 						Program.launch(f.getAbsolutePath());

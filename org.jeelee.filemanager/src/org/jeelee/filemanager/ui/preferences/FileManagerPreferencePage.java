@@ -96,7 +96,7 @@ public class FileManagerPreferencePage extends PreferencePage {
 		cmdWinDOS(1,
 				"Windows DOS-Shell / Explorer",
 				"cmd.exe /C start \"{4}\" /D\"{1}\" cmd.exe /K",//cmd
-				"cmd.exe /C start \"{4}\" /D\"{1}\" \"{3}\"",//run
+				"cmd.exe /C \"{2}\"",//run
 				"explorer.exe /select,\"{2}\"", "{2}{5}"), //explore copy
 		cmdWinPower(
 				2,

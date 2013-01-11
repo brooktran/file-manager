@@ -1,8 +1,5 @@
 Manifest-Version: 1.0
-Export-Package: org.eclipse.nebula.jface.gridviewer,
- org.eclipse.nebula.widgets.grid,
- org.eclipse.nebula.widgets.grid.internal,
- org.jeelee.core,
+Export-Package: org.jeelee.core,
  org.jeelee.event,
  org.jeelee.ui.internal,
  org.jeelee.ui.preference,

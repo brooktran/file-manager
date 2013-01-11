@@ -27,24 +27,39 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.jeelee.event.AbstractBean;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
@@ -101,9 +116,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 
 	public FolderEditor() {
 		history=new Stack<>();
-		//		forwardAction.setEnabled(false);
-		backAcion.setEnabled(false);
-		
+
 		fileFilter=new FileFilterDelegate();
 		fileFilter.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
@@ -112,7 +125,6 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 				if(propertyName.equals(KeyWordFilter.PROPERTY_KEYWORD)){
 					tableViewer.getTable().getColumn(4).setWidth(fileFilter.getKeyword().isEmpty()?0:600);
 					tableViewer.getTable().getColumn(4).setResizable(!fileFilter.getKeyword().isEmpty());
-//					tableViewer.setInput(getFileFromInput());
 				}
 				if(propertyName.equals(FileFilterDelegate.RESULT_CHANGED_PROPERTY)){
 					return;
@@ -120,33 +132,24 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 				refreshTable();
 			}
 		});
-//		getSite().setSelectionProvider(new ISelectionProvider() {
-//			private ListenerList listeners=new ListenerList();
-//			
-//			@Override
-//			public void setSelection(ISelection selection) {
-////				FileSelection s=(FileSelection) selection;
-////				s.getFilter().setSource(root)
-//			}
-//			
-//			@Override
-//			public void removeSelectionChangedListener(
-//					ISelectionChangedListener listener) {
-//				listeners.remove(listener);
-//			}
-//			
-//			@Override
-//			public ISelection getSelection() {
-//				return new FileSelection(fileFilter);
-//			}
-//			
-//			@Override
-//			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-//				listeners.add(listener);
-//			}
-//		});
 	}
 	
+
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+	}
+
+	@Override
+	public void doSaveAs() {
+	}
+
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+	}
+
 
 	protected synchronized void refreshTable() {
 		JobRunner.runShortUserJob(new Job(r.getString(Messages.OPEN) + fileFilter.getKeyword()) {
@@ -168,20 +171,16 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 			}
 		});
 	}
-
 	@Override
-	public void doSave(IProgressMonitor monitor) {
-	}
-
-	@Override
-	public void doSaveAs() {
-	}
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
-		setSite(site);
-		setInput(input);
+	public void refresh() {
+		JobRunner.runShortUserJob(new Job(r.getString(Messages.REFRESH)) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				fileFilter.getSource().refresh();
+				getBean().firePropertyChanged(REFRESHED_PROPERTY, null, null);
+				return Status.OK_STATUS;
+			}
+		});
 	}
 
 
@@ -201,68 +200,179 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
-
 	@Override
 	public void createPartControl(Composite parent) {
-		ViewForm viewForm = new ViewForm(parent, SWT.NONE);
-		createDetailsView(viewForm);
+		container = new Composite(parent, SWT.BORDER);
+		container.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
+		GridLayout gl_container = new GridLayout(1, false);
+		gl_container.verticalSpacing = 0;
+		gl_container.marginWidth = 0;
+		gl_container.marginHeight = 0;
+		gl_container.horizontalSpacing = 0;
+		container.setLayout(gl_container);
+		
+		toolbar = new Composite(container, SWT.BORDER);
+		toolbar.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
+		GridLayout gl_toolbar = new GridLayout(4, false);
+		gl_toolbar.horizontalSpacing = 2;
+		gl_toolbar.marginHeight = 0;
+		gl_toolbar.verticalSpacing = 0;
+		gl_toolbar.marginWidth = 0;
+		toolbar.setLayout(gl_toolbar);
+		toolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		createDetailsView(container);
+		
 		hookToolbar();
-		createToolbar(viewForm);
+		createToolbar(toolbar);
+		new Label(toolbar, SWT.NONE);
+		
+		
 		resolveInput();
 	}
 
 
-	private void createToolbar(ViewForm viewForm) {
-		Composite container = new Composite(viewForm, SWT.NONE);
-		container.setLayout(new GridLayout(2, false));
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		ToolBarManager manager = new ToolBarManager();
+	private void createToolbar(Composite parent) {
+		//		forwardAction.setEnabled(false);
+		backAcion.setEnabled(false);
 		selectionAction.setEnabled(false);
+		ToolBarManager manager = new ToolBarManager();
 		manager.add(selectionAction);
 		manager.add(helper.findAction(RefreshAction.ID));
 		manager.add(backAcion);
 		manager.add(upAction);
-//		manager.add(action)
-		manager.createControl(container);
+		ToolBar toolBar =manager.createControl(parent);
 		//		manager.add(forwardAction);
 		
-		pathText = new Text(container,SWT.BORDER);
-		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		pathText.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.keyCode == SWT.CR){
-					String path = pathText.getText().trim();
-					if(path.isEmpty()){
-						return;
-					}
-
-					FileDelegate file = new FileDelegate(path);
-					updateInput(new FileResourceInput(file, false));
-				}
-			}
-		});
-		viewForm.setTopLeft(container); 
+//		ToolBar toolBar = new ToolBar(toolbar, SWT.FLAT | SWT.RIGHT);
+		toolBar.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		
-
-		final Text searchText = new Text(viewForm, SWT.BORDER |SWT.SEARCH | SWT.READ_ONLY);//TODO history; promote;
-		searchText.setMessage(r.getString(Messages.SEARCH));
-		searchText.setText(fileFilter.getKeyword().isEmpty()?r.getString(Messages.SEARCH):fileFilter.getKeyword());
-		viewForm.setTopRight(searchText);
+//		ToolItem tltmNewItem = new ToolItem(toolBar, SWT.NONE);
+//		tltmNewItem.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//			}
+//		});
+//		tltmNewItem.setText("New Item");
 		
-		searchText.addMouseListener(new MouseAdapter() {
+		createSearchText(parent);
+		
+		Button btnFilter = new Button(parent, SWT.NONE);
+		btnFilter.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
-				if(filterDialog !=null){
+			public void widgetSelected(SelectionEvent e) {
+				if (filterDialog != null) {
 					filterDialog.close();
-//					return;
 				}
 				filterDialog = new FilterDialog(getShell(), fileFilter);
 				filterDialog.open();
 			}
 		});
+		btnFilter.setImage(ResourceManager.getPluginImage("org.jeelee.filemanager", "icons/filter.gif"));
+
+	}
+
+
+	private void createSearchText(Composite parent) {
+		pathText = new Text(parent,SWT.BORDER);
+		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		//		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				pathText.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.keyCode == SWT.CR){
+							String path = pathText.getText().trim();
+							if(path.isEmpty()){
+								return;
+							}
 		
+							FileDelegate file = new FileDelegate(path);
+							updateInput(new FileResourceInput(file, false));
+						}
+					}
+				});
+		
+		
+		Composite composite = new Composite(parent, SWT.BORDER);
+		composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
+		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
+		rl_composite.marginTop = 0;
+		rl_composite.marginRight = 0;
+		rl_composite.marginLeft = 0;
+		rl_composite.marginBottom = 1;
+		composite.setLayout(rl_composite);
+		
+		final Text searchText = new Text(composite, SWT.NONE );
+		searchText.setLayoutData(new RowData(71, SWT.DEFAULT));
+		searchText.setMessage(r.getString(Messages.SEARCH));
+
+		Label clearButton = new Label(composite, SWT.NONE);
+		clearButton.setImage(ResourceManager.getPluginImage(
+				"org.jeelee.filemanager", "icons/clear.png"));
+		clearButton.setBackground(SWTResourceManager
+				.getColor(SWT.COLOR_LIST_BACKGROUND));
+		clearButton.setToolTipText(r.getString(Messages.CLEAR));
+
+		searchText.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				System.out
+						.println("FolderEditor.createSearchText(...).new FocusListener() {...}.focusGained()");
+				// ((GridData)pathText.getLayoutData()).exclude=true;
+				// pathText.getParent().layout();
+			}
+		});
+				
+		searchText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// on a CR we want to transfer focus to the list
+				boolean hasItems = tableViewer.getTable().getItemCount() > 0;
+				if (hasItems && e.keyCode == SWT.ARROW_DOWN) {
+					tableViewer.getTable().setFocus();
+					return;
+				}
+			}
+		});
+				
+				// enter key set focus to tree
+				searchText.addTraverseListener(new TraverseListener() {
+					@Override
+					public void keyTraversed(TraverseEvent e) {
+						if (e.detail == SWT.TRAVERSE_RETURN) {
+							e.doit = false;
+							if (tableViewer.getTable().getItemCount() == 0) {
+								Display.getCurrent().beep();
+							} else {
+								// if the initial filter text hasn't changed, do not try
+								// to match
+								boolean hasFocus = tableViewer.getTable().setFocus();
+//						boolean textChanged = !getInitialText().equals(
+//								filterText.getText().trim());
+//						if (hasFocus && textChanged
+//								&& filterText.getText().trim().length() > 0) {
+//							Tree tree = getViewer().getTree();
+//							TreeItem item;
+//							if (tree.getSelectionCount() > 0)
+//								item = getFirstMatchingItem(tree.getSelection());
+//							else
+//								item = getFirstMatchingItem(tree.getItems());
+//							if (item != null) {
+//								tree.setSelection(new TreeItem[] { item });
+//								ISelection sel = getViewer().getSelection();
+//								getViewer().setSelection(sel, true);
+//							}
+//						}
+							}
+						}
+					}
+				});
 //		FilterView filterView= new FilterView(searchText);
 //		filterView.setHideOnMouseDown(false);
 //		filterView.setShift(new Point(-10, -10));
@@ -271,14 +381,44 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	}
 
 
-	private void createDetailsView(ViewForm viewForm) {
-		tableViewer = TableViewerFactory.createCheckboxTableViewer(viewForm,false,false ,
+	private void createDetailsView(Composite parent) {
+		
+		Composite composite = new Composite(container, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
+		rl_composite.justify = true;
+		rl_composite.pack = false;
+		rl_composite.wrap = false;
+		composite.setLayout(rl_composite);
+		
+		Combo combo_1 = new Combo(composite, SWT.NONE);
+		
+		Combo combo_2 = new Combo(composite, SWT.NONE);
+		
+		Combo combo_3 = new Combo(composite, SWT.NONE);
+		
+		Combo combo_4 = new Combo(composite, SWT.NONE);
+		
+		Combo combo_5 = new Combo(composite, SWT.NONE);
+		
+		Combo combo_6 = new Combo(composite, SWT.NONE);
+		
+		Combo combo_7 = new Combo(composite, SWT.NONE);
+		
+		for(int i=0;i<20;i++){
+			Combo combo = new Combo(composite, SWT.NONE);
+			combo.setText(i*11111111+"");
+		}
+		
+		tableViewer = TableViewerFactory.createCheckboxTableViewer(parent,false,false ,
 				SWT.BORDER 
 				| SWT.MULTI
 				| SWT.FULL_SELECTION 
 				| SWT.VIRTUAL
 				| SWT.CHECK
 				);
+		Table table = tableViewer.getTable();
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		TableViewerFactory.createNavigation(tableViewer,  new ColumnViewerEditorActivationStrategy(tableViewer) {
 			@Override
 			protected boolean isEditorActivationEvent(
@@ -303,7 +443,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		tableViewer.setCellModifier(new FileDelegateCellModifier(tableViewer));
 
 		//		tableViewer.addFilter(fileFilter);
-		viewForm.setContent(tableViewer.getTable());
+//		viewForm.setContent(tableViewer.getTable());
 
 		int columnIndex=0;
 		TableViewerColumn nameColumn =
@@ -376,6 +516,10 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				if(tableViewer.getCheckedElements().length==0){
+					setInput(getEditorInput());
+					resolveInput();
+				}
 				selectionAction.setEnabled(tableViewer.getCheckedElements().length!=0);
 			}
 		});
@@ -428,8 +572,8 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 
 		setInput(newInput);
 		resolveInput();
-		
 	}
+	
 	private void resolveInput() {
 		final FileDelegate newDelegate = ((FileResourceInput)getEditorInput()).getFileDelegate();
 //		newDelegate.startWatch();
@@ -483,18 +627,6 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	public FileDelegate getDefaultSelection() {
 		return fileFilter.getSource();
 	}
-	@Override
-	public void refresh() {
-		JobRunner.runShortUserJob(new Job(r.getString(Messages.REFRESH)) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				fileFilter.getSource().refresh();
-				getBean().firePropertyChanged(REFRESHED_PROPERTY, null, null);
-				return Status.OK_STATUS;
-			}
-		});
-	}
-
 	private Action upAction = new JFaceAction(Messages.UP, FileManagerActivator.RESOURCES){
 		@Override
 		public void run() {
@@ -527,6 +659,10 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 			fileFilter.setSource(target);
 		};
 	};
+	private Composite toolbar;
+	private Composite container;
+//	private Composite container;
+//	private Composite toolbar;
 
 //	class FilterView extends ToolTip{
 ////		private Button btnRegexGenerator ;

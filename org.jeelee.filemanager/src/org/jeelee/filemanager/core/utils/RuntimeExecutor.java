@@ -11,6 +11,7 @@
 package org.jeelee.filemanager.core.utils;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.ui.FileManagerActivator;
@@ -34,25 +35,13 @@ public class RuntimeExecutor {
 	}
 	
 	public static Process execute(String command,FileDelegate file){
-//		String cmd = MessageFormat.format(command, (Object[])getArguements(file));
+		String cmd = MessageFormat.format(command, (Object[])getArguements(file));
 		try {
-			String[] cmd=new String[]{"cmd","/C",file.getAbsolutePath()};
-
 			return Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			AppLogging.handleException(e);
 			return null;
 		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		String [] cmd=new String[]{"cmd","/C","F:/backup/SystemDesktop/00.txt"};
-		Process process=Runtime.getRuntime().exec(cmd);
-		process.waitFor();
-		cmd=new String[]{"cmd","/C","F:/backup/SystemDesktop/2.pdf"};
-		process=Runtime.getRuntime().exec(cmd);
-		process.waitFor();
-		System.out.println("FileSystemOperation.main()");
 	}
 	
 
@@ -76,7 +65,8 @@ public class RuntimeExecutor {
 				drive = full_path.substring(0, full_path.indexOf(":"));
 			}
 		}
-		return new String[]{drive,parent_path,full_path,file_name,"jeelee",System.getProperty("line.separator")};
+		return new String[]{drive,parent_path,full_path,
+				file_name,"jeelee",System.getProperty("line.separator")};
 	}
 	
 	
