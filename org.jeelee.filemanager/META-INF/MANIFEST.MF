@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.icu,
  org.jeelee.core.ui;bundle-version="2.1.0",
  org.eclipse.ui.console;bundle-version="3.5.100",
- org.junit4;bundle-version="4.8.1";resolution:=optional
+ org.junit4;bundle-version="4.8.1";resolution:=optional,
+ org.jeelee.ui.breadcrumb;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,

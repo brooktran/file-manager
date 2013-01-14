@@ -8,7 +8,7 @@
  * with the copyright holders. For details see accompanying license
  * terms.
  */
-package org.jeelee.filemanager.ui.breadcrumb;
+package org.jeelee.ui.breadcrumb.layout;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

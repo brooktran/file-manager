@@ -105,7 +105,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			}
 		});
 		fContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
-
+		
 		fContainer.addListener(SWT.Resize, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -143,6 +143,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 				refresh();
 			}
 		});
+		
 	}
 
 	/**
@@ -154,6 +155,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 */
 	protected abstract void configureDropDownViewer(TreeViewer viewer, Object input);
 
+	
 	/**
 	 * The tool tip to use for the tool tip labels. <code>null</code> if the viewers label provider
 	 * should be used.

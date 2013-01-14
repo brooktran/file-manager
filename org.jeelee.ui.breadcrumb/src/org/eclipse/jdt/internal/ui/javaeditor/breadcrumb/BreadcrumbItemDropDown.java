@@ -62,6 +62,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.themes.ColorUtil;
+import org.jeelee.ui.breadcrumb.Activator;
 
 
 /**
@@ -306,7 +307,7 @@ class BreadcrumbItemDropDown {
 		gridLayout.marginWidth= 0;
 		composite.setLayout(gridLayout);
 
-		fDropDownViewer= new ProblemTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
+		fDropDownViewer= new TreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		fDropDownViewer.setUseHashlookup(true);
 
 		final Tree tree= (Tree) fDropDownViewer.getControl();
@@ -353,11 +354,6 @@ class BreadcrumbItemDropDown {
 		tree.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				if (DEBUG)
-				 {
-					System.out.println("BreadcrumbItemDropDown.showMenu()$treeViewer>mouseUp"); //$NON-NLS-1$
-				}
-
 				if (e.button != 1) {
 					return;
 				}
@@ -394,16 +390,16 @@ class BreadcrumbItemDropDown {
 						boolean showHandPointer= false;
 						if (o instanceof TreeItem) {
 							Object itemData= ((TreeItem)o).getData();
-							if (itemData instanceof IJavaElement) {
-								int elementType= ((IJavaElement)itemData).getElementType();
-								if (elementType != IJavaElement.JAVA_PROJECT && elementType != IJavaElement.PACKAGE_FRAGMENT && elementType != IJavaElement.PACKAGE_FRAGMENT_ROOT) {
-									showHandPointer= true;
-								}
-							} else if (itemData instanceof IFile) {
-								showHandPointer= true;
-							} else if (itemData instanceof IJarEntryResource) {
-								showHandPointer= ((IJarEntryResource)itemData).isFile();
-							}
+//							if (itemData instanceof IJavaElement) {
+//								int elementType= ((IJavaElement)itemData).getElementType();
+//								if (elementType != IJavaElement.JAVA_PROJECT && elementType != IJavaElement.PACKAGE_FRAGMENT && elementType != IJavaElement.PACKAGE_FRAGMENT_ROOT) {
+//									showHandPointer= true;
+//								}
+//							} else if (itemData instanceof IFile) {
+//								showHandPointer= true;
+//							} else if (itemData instanceof IJarEntryResource) {
+//								showHandPointer= ((IJarEntryResource)itemData).isFile();
+//							}
 						}
 						tree.setCursor(showHandPointer ? tree.getDisplay().getSystemCursor(SWT.CURSOR_HAND) : null);
 					}
@@ -580,16 +576,7 @@ class BreadcrumbItemDropDown {
 						break;
 
 					case SWT.FocusOut:
-						if (DEBUG)
-						 {
-							System.out.println("focusOut - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
-						}
-
 						if (event.display.getActiveShell() == null) {
-							if (DEBUG)
-							 {
-								System.out.println("==> closing shell since event.display.getActiveShell() == null"); //$NON-NLS-1$
-							}
 							shell.close();
 						}
 						break;
@@ -620,11 +607,6 @@ class BreadcrumbItemDropDown {
 		shell.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				if (DEBUG)
-				 {
-					System.out.println("==> shell disposed"); //$NON-NLS-1$
-				}
-
 				display.removeFilter(SWT.FocusIn, focusListener);
 				display.removeFilter(SWT.FocusOut, focusListener);
 
@@ -640,11 +622,6 @@ class BreadcrumbItemDropDown {
 
 			@Override
 			public void shellClosed(ShellEvent e) {
-				if (DEBUG)
-				 {
-					System.out.println("==> shellClosed"); //$NON-NLS-1$
-				}
-
 				if (!fMenuIsShown) {
 					return;
 				}
@@ -668,7 +645,7 @@ class BreadcrumbItemDropDown {
 	}
 
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings javaSettings= JavaPlugin.getDefault().getDialogSettings();
+		IDialogSettings javaSettings= Activator.getDefault().getDialogSettings();
 		IDialogSettings settings= javaSettings.getSection(DIALOG_SETTINGS);
 		if (settings == null) {
 			settings= javaSettings.addNewSection(DIALOG_SETTINGS);
@@ -679,7 +656,7 @@ class BreadcrumbItemDropDown {
 	private int getMaxHeight() {
 		try {
 			return getDialogSettings().getInt(DIALOG_HEIGHT);
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			return DROP_DOWN_DEFAULT_MAX_HEIGHT;
 		}
 	}
