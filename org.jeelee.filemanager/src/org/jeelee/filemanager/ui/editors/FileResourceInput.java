@@ -8,10 +8,10 @@ import org.jeelee.filemanager.core.FileDelegate;
 public class FileResourceInput implements IEditorInput {
 	private final boolean openInNewEditor;
 	private FileDelegate file ;
-	public FileResourceInput(FileDelegate fileProxy,
+	public FileResourceInput(FileDelegate file,
 			boolean openInNewEditor) {
 		this.openInNewEditor=openInNewEditor;
-		this.file = fileProxy;
+		this.file = file;
 	}
 
 	@Override

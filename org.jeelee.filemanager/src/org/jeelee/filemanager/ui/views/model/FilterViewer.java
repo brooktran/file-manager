@@ -62,9 +62,9 @@ import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.JeeleeFileSystem;
 import org.jeelee.filemanager.core.filters.CatalogFactory;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
+import org.jeelee.filemanager.core.filters.FileSizeFilter;
 import org.jeelee.filemanager.core.filters.KeyWordFilter;
 import org.jeelee.filemanager.core.filters.ScopeCatalog;
-import org.jeelee.filemanager.core.filters.FileSizeFilter;
 import org.jeelee.filemanager.core.filters.SuffixCatalog;
 import org.jeelee.filemanager.core.filters.SuffixFilter;
 import org.jeelee.filemanager.ui.FileManagerActivator;
@@ -105,6 +105,11 @@ public class FilterViewer {
 	private Map<String, Button>		catalogButtons;
 	private Composite				container_1;
 
+	private List<Button> sizeButtons;
+	private Composite suffixComposite;
+	private Composite emptySuffixComposite;
+	
+	
 	/**
 	 * @wbp.parser.constructor
 	 */
@@ -305,7 +310,6 @@ public class FilterViewer {
 		button_2.setText("export");
 	}
 
-	private List<Button> sizeButtons;
 	private void createSizeCatalogButtons(Composite parent) {
 		Iterator<AcceptableCounter<FileDelegate, FileSizeFilter>> it = fileFilter.getFilteredSizeIterator();
 		
@@ -759,8 +763,7 @@ public class FilterViewer {
 
 		createSuffixButtons();
 	}
-	private Composite suffixComposite;
-	private Composite emptySuffixComposite;
+	
 	
 	public static void createTypeFilterView(Composite parent2) {//XXX for test
 		Button button = new Button(parent2, SWT.NONE);
@@ -803,6 +806,7 @@ public class FilterViewer {
 			catalogButton.setSelection(filter.contains(catalog));
 		}
 	}
+	
 	private void createSuffixButtons() {
 		Iterator<Entry<String, Integer>> it = fileFilter.getFilteredSuffixesIterator();
 		ArrayList<Entry<String, Integer>> entries = new ArrayList<>();
@@ -851,7 +855,7 @@ public class FilterViewer {
 					updateSuffixButton(en.getKey(), button);
 				}
 			});
-			Program program = Program.findProgram(en.getKey());
+			Program program = Program.findProgram(en.getKey());//TODO get image from ImageRegistry
 			if (program != null) {
 				ImageData imageData = program.getImageData();
 				if (imageData != null) {
@@ -898,7 +902,7 @@ public class FilterViewer {
 		JobRunner.runUIJob(new UIJob(r.getString(Messages.FetchingContent)) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				for (Control c : grpSuffixes.getChildren()) {
+				for (Control c : suffixComposite.getChildren()) {
 					c.dispose();
 				}
 				suffixButtons.clear();

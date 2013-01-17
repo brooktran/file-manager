@@ -27,6 +27,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -180,7 +183,8 @@ class BreadcrumbItemDropDown {
 	private TreeViewer fDropDownViewer;
 	private Shell fShell;
 	private boolean isResizingProgrammatically;
-
+	private Action showDropDownMenuAction;
+	
 	public BreadcrumbItemDropDown(BreadcrumbItem parent, Composite composite) {
 		fParent= parent;
 		fParentComposite= composite;
@@ -189,10 +193,22 @@ class BreadcrumbItemDropDown {
 
 		fToolBar= new ToolBar(composite, SWT.FLAT);
 		fToolBar.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-//		SWTUtil.setAccessibilityText(fToolBar, BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip);
-		ToolBarManager manager= new ToolBarManager(fToolBar);
 
-		final Action showDropDownMenuAction= new Action(null, SWT.NONE) {
+		
+		
+		fToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				if (e.childID == ACC.CHILDID_SELF) {
+					e.result= BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip;
+				}
+			}
+		});
+		
+		
+		ToolBarManager manager= new ToolBarManager(fToolBar);
+		
+		showDropDownMenuAction= new Action(null, Action.AS_DROP_DOWN_MENU | SWT.RIGHT) {
 			@Override
 			public void run() {
 				Shell shell= fParent.getDropDownShell();
@@ -215,10 +231,9 @@ class BreadcrumbItemDropDown {
 		showDropDownMenuAction.setToolTipText(BreadcrumbMessages.BreadcrumbItemDropDown_showDropDownMenu_action_toolTip);
 		manager.add(showDropDownMenuAction);
 
-		manager.update(true);
+		manager.update(true);	
 		if (IS_MAC_WORKAROUND) {
 			manager.getControl().addMouseListener(new MouseAdapter() {
-				// see also BreadcrumbItemDetails#addElementListener(Control)
 				@Override
 				public void mouseDown(MouseEvent e) {
 					showDropDownMenuAction.run();
@@ -795,6 +810,10 @@ class BreadcrumbItemDropDown {
 	 */
 	private boolean isLTR() {
 		return (fParentComposite.getStyle() & SWT.RIGHT_TO_LEFT) == 0;
+	}
+
+	public void setToolTip(String text) {
+		showDropDownMenuAction.setToolTipText(text);
 	}
 }
 

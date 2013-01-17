@@ -43,8 +43,8 @@ import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
 import org.jeelee.filemanager.ui.actions.GlobalFileExplorerActionGroupHelper;
 import org.jeelee.filemanager.ui.dialog.FilterDialog;
+import org.jeelee.filemanager.ui.views.model.FileCounterLabelProvider;
 import org.jeelee.filemanager.ui.views.model.FileDelegateCellModifier;
-import org.jeelee.filemanager.ui.views.model.FileDelegateLabelProvider;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
 import org.jeelee.filemanager.ui.views.model.ViewerPathProvider;
 import org.jeelee.ui.internal.TreeViewerFactory;
@@ -90,7 +90,7 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 
 		final TreeViewerColumn nameColumn = new TreeViewerColumn(viewer,
 				SWT.NONE);
-		nameColumn.setLabelProvider(new FileDelegateLabelProvider());
+		nameColumn.setLabelProvider(new FileCounterLabelProvider());
 		parent.addControlListener(new ControlListener() {
 			@Override
 			public void controlResized(ControlEvent e) {
@@ -302,14 +302,14 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 }
 
 class TreeContentProvider extends TreeNodeContentProvider implements
-	ILazyTreeContentProvider {
+		ILazyTreeContentProvider {
 
 	class PrefetchModelJob extends Job {
 
-		private final FileDelegate child;
-		private final FileDelegate parent;
-		int index;
-		int count;
+		private final FileDelegate	child;
+		private final FileDelegate	parent;
+		int							index;
+		int							count;
 
 		private final UIJob uiJob=new UIJob(FileManagerActivator.RESOURCES.getFormatted(Messages.FetchingContent,getName())) {
 			@Override
@@ -318,7 +318,7 @@ class TreeContentProvider extends TreeNodeContentProvider implements
 					return Status.CANCEL_STATUS;
 				}
 				treeViewer.replace(parent, index, child);
-//				treeViewer.setChildCount(child, count);
+	//			treeViewer.setChildCount(child, count);
 				updateChildCount(child, count);
 				return Status.OK_STATUS;
 			}
@@ -357,21 +357,21 @@ class TreeContentProvider extends TreeNodeContentProvider implements
 		}
 	};
 
-	private TreeViewer treeViewer;
+	private TreeViewer			treeViewer;
 	private FileFilterDelegate	fileFilter;
 
-	public TreeContentProvider(TreeViewer treeViewer, FileFilterDelegate fileFilter) {
+	public TreeContentProvider(TreeViewer treeViewer,
+			FileFilterDelegate fileFilter) {
 		this.treeViewer = treeViewer;
 		this.fileFilter = fileFilter;
 	}
 
 	@Override
 	public void updateChildCount(Object element, int currentChildCount) {
-		int count =0;
-		List<FileDelegate> files = ((FileDelegate) element)
-				.getChildren();
-		for(FileDelegate child : files){
-			if(fileFilter.select(child)){
+		int count = 0;
+		List<FileDelegate> files = ((FileDelegate) element).getChildren();
+		for (FileDelegate child : files) {
+			if (fileFilter.select(child)) {
 				count++;
 			}
 		}
@@ -386,7 +386,8 @@ class TreeContentProvider extends TreeNodeContentProvider implements
 
 		if (child.isDirectory()) {
 			PrefetchModelJob job = new PrefetchModelJob(
-					FileManagerActivator.RESOURCES.getFormatted(Messages.FetchingContent,child.getAbsolutePath()),
+					FileManagerActivator.RESOURCES.getFormatted(
+							Messages.FetchingContent, child.getAbsolutePath()),
 					parentDir, index, child);
 			JobRunner.runShortUserJob(job);
 		}
@@ -400,8 +401,6 @@ class TreeContentProvider extends TreeNodeContentProvider implements
 			return;
 		}
 		updateChildCount(newInput, 0);
-//		treeViewer.setChildCount(newInput, ((FileDelegate) newInput)
-//				.getChildren().size());
 	}
 
 	@Override
@@ -422,13 +421,13 @@ class TreeContentProvider extends TreeNodeContentProvider implements
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		ArrayList<FileDelegate> children = new ArrayList<>();
-		for(FileDelegate child:((FileDelegate) parentElement).getChildren()){
-			if(child.isDirectory()){
+		for (FileDelegate child : ((FileDelegate) parentElement).getChildren()) {
+			if (child.isDirectory()) {
 				children.add(child);
 			}
 		}
 		return children.toArray();
-		
-//		return ((FileDelegate) parentElement).getChildren().toArray();
+
+		// return ((FileDelegate) parentElement).getChildren().toArray();
 	}
 }

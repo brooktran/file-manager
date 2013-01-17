@@ -166,6 +166,7 @@ See the  GNU General Public License  for more details.
       <plugin id="org.jeelee.filemanager"/>
       <plugin id="org.jeelee.filemanager.help.nl1" fragment="true"/>
       <plugin id="org.jeelee.regex"/>
+      <plugin id="org.jeelee.ui.breadcrumb"/>
       <plugin id="org.jeelee.workbench.ui"/>
       <plugin id="org.jeelee.workbench.ui.docs" fragment="true"/>
       <plugin id="org.jeelee.workbench.ui.nl1" fragment="true"/>

@@ -9,3 +9,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui;bundle-version="3.7.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.jdt.internal.ui.javaeditor.breadcrumb,
+ org.jeelee.ui.breadcrumb.layout

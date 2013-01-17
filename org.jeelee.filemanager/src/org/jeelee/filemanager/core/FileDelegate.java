@@ -3,7 +3,6 @@ package org.jeelee.filemanager.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitResult;
@@ -101,16 +100,14 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 		if(isResolving() || !isVisitable() ){
 			return 0;
 		}
+		setResolving(true);
 
 		if(isContentsInitialized()){
 			return getChildren().size();
 		}
-		setResolving(true);
 
-		if (isContentsInitialized()) {
-			return getChildren().size();
-		}
-
+		boolean success = true;
+		int count=0;
 		try {
 			clearChildren();
 
@@ -122,33 +119,35 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 
 				for (Path child : ds) {
 					FileDelegate entry = new FileDelegate(child);
-
 					if (entry.isDirectory()) {
 						addChild(entry);
 					} else {
 						fileList.add(entry);
 					}
+					count++;
 				}
 				addChildren(fileList);
 			}
-		} catch (AccessDeniedException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
+			success = false;
 			AppLogging.handleException(e);
 		} finally {
 			setResolving(false);
 		}
-		setContentsInitialized(true);
+		setContentsInitialized(success);
 
-		return getChildren().size();
+		return count;
 	}
 
 
 	public void refresh() {
+		if (resolving) {
+			return;
+		}
+		
 		clearChildren();
 		setContentsInitialized(false);
 		resolveChildren();
-//		walkFileTree(monitor);
 		firePropertyChanged(Messages.REFRESH, null, null);
 	}
 
@@ -237,14 +236,9 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 		if(child == null){
 			return;
 		}
-		for(FileDelegate c:children){
-			if(c.getAbsolutePath().equals(child.getAbsolutePath())){
-				return;
-			}
+		if (children.contains(child)) {
+			return;
 		}
-		//		if(children.contains(child)){
-		//			return;
-		//		}
 		super.addChild(child);
 	}
 

@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -33,6 +32,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -72,6 +73,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	private final Composite fContainer;
 	private final ArrayList<BreadcrumbItem> fBreadcrumbItems;
 	private final ListenerList fMenuListeners;
+	private final ListenerList fMouseListeners;
 
 	private Image fGradientBackground;
 	private BreadcrumbItem fSelectedItem;
@@ -94,9 +96,12 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	public BreadcrumbViewer(Composite parent, int style) {
 		fBreadcrumbItems= new ArrayList<BreadcrumbItem>();
 		fMenuListeners= new ListenerList();
+		fMouseListeners=new ListenerList();
 
-		fContainer= new Composite(parent, SWT.NONE);
+		fContainer= new Composite(parent, style);
 		GridData layoutData= new GridData(SWT.FILL, SWT.TOP, true, false);
+		
+		
 		fContainer.setLayoutData(layoutData);
 		fContainer.addTraverseListener(new TraverseListener() {
 			@Override
@@ -106,23 +111,6 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		});
 		fContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
-		fContainer.addListener(SWT.Resize, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				int height= fContainer.getClientArea().height;
-
-				if (fGradientBackground == null || fGradientBackground.getBounds().height != height) {
-					Image image= height == 0 ? null : createGradientImage(height, event.display);
-					fContainer.setBackgroundImage(image);
-
-					if (fGradientBackground != null) {
-						fGradientBackground.dispose();
-					}
-					fGradientBackground= image;
-				}
-			}
-		});
-
 		hookControl(fContainer);
 
 		int columns= 1000;
@@ -165,12 +153,9 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	public void setToolTipLabelProvider(ILabelProvider toolTipLabelProvider) {
 		fToolTipLabelProvider= toolTipLabelProvider;
 	}
-
-	/*
-	 * @see org.eclipse.jface.viewers.Viewer#getControl()
-	 */
+	
 	@Override
-	public Control getControl() {
+	public Control getControl(){ 
 		return fContainer;
 	}
 
@@ -286,19 +271,18 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	public void removeMenuDetectListener(MenuDetectListener listener) {
 		fMenuListeners.remove(listener);
 	}
-
-	/*
-	 * @see org.eclipse.jface.viewers.StructuredViewer#assertContentProviderType(org.eclipse.jface.viewers.IContentProvider)
-	 */
+	public void addMouseListener(MouseListener listener){
+		fMouseListeners.add(listener);
+	}
+	public void removeMouseListener(MouseListener listener){
+		fMouseListeners.remove(listener);
+	}
 	@Override
 	protected void assertContentProviderType(IContentProvider provider) {
 		super.assertContentProviderType(provider);
 		Assert.isTrue(provider instanceof ITreeContentProvider);
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	protected void inputChanged(Object fInput, Object oldInput) {
 		if (fContainer.isDisposed()) {
@@ -493,7 +477,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			fSelectedItem.setSelected(false);
 		}
 
-		fSelectedItem= item;
+		fSelectedItem = item;
 		setSelectionToWidget(getSelection(), false);
 
 		if (item != null) {
@@ -505,7 +489,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			}
 		}
 
-		fireSelectionChanged(new SelectionChangedEvent(this, getSelection()));
+//		fireSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
 
 	/**
@@ -607,7 +591,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 				selectItem(nextItem);
 			}
 		} else {
-			if (index == 1) {
+			if (index == 0) {
 				BreadcrumbItem root= fBreadcrumbItems.get(0);
 				root.openDropDownMenu();
 				root.getDropDownShell().setFocus();
@@ -694,9 +678,9 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		if (currentWidth > width) {
 			int index= 0;
 			while (currentWidth > width && index < fBreadcrumbItems.size() - 1) {
-				BreadcrumbItem viewer= fBreadcrumbItems.get(index);
-				if (viewer.isShowText()) {
-					viewer.setShowText(false);
+				BreadcrumbItem item= fBreadcrumbItems.get(index);
+				if (item.isShowText()) {
+					item.setShowText(false);
 					currentWidth= getCurrentWidth();
 					requiresLayout= true;
 				}
@@ -859,5 +843,19 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 		}
 
 		super.handleDispose(event);
+	}
+
+	void fireMouseDown(MouseEvent e) {
+		Object[] listeners= fMouseListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			((MouseListener)listeners[i]).mouseDown(e);
+		}	
+	}
+
+	void fireMouseUp(MouseEvent e) {
+		Object[] listeners= fMouseListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			((MouseListener)listeners[i]).mouseUp(e);
+		}		
 	}
 }

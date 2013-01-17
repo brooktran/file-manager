@@ -19,6 +19,14 @@ public class FileEditorActionGroupHelper extends FileExplorerActionGroupHelper{
 	public void handleDoubleClick(DoubleClickEvent e){
 		IStructuredSelection selection = (IStructuredSelection) e
 				.getSelection();
+		handleSelection(selection);
+	}
+	@Override
+	protected IActionBars getActionBars() {
+		return editor.getEditorSite().getActionBars();
+	}
+
+	public void handleSelection(IStructuredSelection selection){
 		final Object element = selection.getFirstElement();
 		if(!(element instanceof FileDelegate)){
 			return;
@@ -29,13 +37,7 @@ public class FileEditorActionGroupHelper extends FileExplorerActionGroupHelper{
 			FileResourceInput input = new FileResourceInput(file, false);
 			editor.updateInput(input);
 		} else {// try open file
-//			findAction(OpenAction.ID).run(selection);
-			
+			findAction(OpenAction.ID).run();
 		}
 	}
-	@Override
-	protected IActionBars getActionBars() {
-		return editor.getEditorSite().getActionBars();
-	}
-
 }

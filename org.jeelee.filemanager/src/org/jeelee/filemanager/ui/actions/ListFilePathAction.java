@@ -49,68 +49,76 @@ public class ListFilePathAction extends SelectionDispatchAction {
 		Iterator it = selection.iterator();
 		FileDelegate root = new FileDelegate();
 		while(it.hasNext()){
-			root.addChild((FileDelegate) it.next());//FIXME will change the structure of the child here.
+			root.addChild((FileDelegate) it.next());
 		}
 		
 		filter= new FileFilterDelegate(root);
 		ListFileDialog dialog = new ListFileDialog(fileExplorer.getShell(),filter);
 		int option = dialog.open();
-		if(option ==  Dialog.OK){
-			copyToClipboard=dialog.isCopyToClipboard();
-			displayInConsole = dialog.isDisplayInConsole(); 
-			
-			ConsoleFactory.showConsole();
-			console= ConsoleFactory.getConsole();
-			if(displayInConsole){
-				messagePrinter =console.newMessageStream();
-				messagePrinter.setColor(Display.getCurrent() .getSystemColor(SWT.COLOR_RED));
+		if(option !=  Dialog.OK){
+			return;
+		}
+		
+		copyToClipboard=dialog.isCopyToClipboard();
+		displayInConsole = dialog.isDisplayInConsole(); 
+		
+		console= ConsoleFactory.getConsole();
+		ConsoleFactory.showConsole();
+		
+		if(displayInConsole){
+			messagePrinter =console.newMessageStream();
+			messagePrinter.setColor(Display.getCurrent() .getSystemColor(SWT.COLOR_RED));
+		}
+		
+		if(copyToClipboard){
+			result=new StringBuilder();
+		}
+		
+		folderPrefix=dialog.getFolderPrefix();
+		subfolderPrefix=dialog.getSubFolderPrefix();
+		
+		
+		String saveAsFileName = dialog.getTarget().trim();
+		try {
+			if (!saveAsFileName.isEmpty() ) {
+				writer = new BufferedWriter(new FileWriter(new File(saveAsFileName)));
 			}
-			
-			if(copyToClipboard){
-				result=new StringBuilder();
-			}
-			
-			folderPrefix=dialog.getFolderPrefix();
-			subfolderPrefix=dialog.getSubFolderPrefix();
-			
-			
-			String saveAsFileName = dialog.getTarget().trim();
-			try {
-				if (!saveAsFileName.isEmpty() ) {
-					writer = new BufferedWriter(new FileWriter(new File(saveAsFileName)));
-				}
-				for(FileDelegate file:root.getChildren()){
-					listAllFileAsText(file, subfolderPrefix);
-				}
-			} catch (Exception e) {
-				MessageConsoleStream errorPrinter =console.newMessageStream();
-				errorPrinter.setColor(Display.getCurrent() .getSystemColor(SWT.COLOR_RED));
-				errorPrinter.print(e.getMessage());
-				try {
-					errorPrinter.flush();
-					errorPrinter.close();
-				} catch (IOException e1) {
-					AppLogging.handleException(e1);
-				} 
-			
-			}finally{
-				try {
-					if(writer!=null){
-						writer.flush();
-						writer.close();
+			for(FileDelegate file:root.getChildren()){
+				writeOrDisplay(file,"");
+				if(file.isDirectory()){
+					for(FileDelegate child:file.getChildren()){
+						listAllFileAsText(child, subfolderPrefix);
 					}
-				} catch (Exception e2) {
-					AppLogging.handleException(e2);
 				}
-				
+			}
+		} catch (Exception e) {
+			MessageConsoleStream errorPrinter =console.newMessageStream();
+			errorPrinter.setColor(Display.getCurrent() .getSystemColor(SWT.COLOR_RED));
+			errorPrinter.print(e.getMessage());
+			try {
+				errorPrinter.flush();
+				errorPrinter.close();
+			} catch (IOException e1) {
+				AppLogging.handleException(e1);
+			} 
+		
+		}finally{
+			try {
+				if(writer!=null){
+					writer.flush();
+					writer.close();
+				}
+			} catch (Exception e2) {
+				AppLogging.handleException(e2);
 			}
 			
-			if(copyToClipboard){
-				TextTransfer textTransfer = TextTransfer.getInstance();
-				Transfer[] transfers = { textTransfer };
-				Object[] data = {result.toString()};
-				transferTo(transfers, data);
-			}
+		}
+		
+		if(copyToClipboard){
+			TextTransfer textTransfer = TextTransfer.getInstance();
+			Transfer[] transfers = { textTransfer };
+			Object[] data = {result.toString()};
+			transferTo(transfers, data);
 		}
 	}
 	protected void transferTo(Transfer[] transfers,Object[] data) {
@@ -126,7 +134,7 @@ public class ListFilePathAction extends SelectionDispatchAction {
 		
 		if(f.isDirectory()){
 			for(FileDelegate child:f.getChildren()){
-				listAllFileAsText(child, prefix+subfolderPrefix);
+				listAllFileAsText(child, prefix+prefix);
 			}
 		}
 	}
@@ -134,8 +142,7 @@ public class ListFilePathAction extends SelectionDispatchAction {
 	private void writeOrDisplay(FileDelegate f, String prefix )
 			throws IOException {
 		String string = (f.isDirectory()?folderPrefix:"") + 
-				prefix+f.getName()+
-				"\r\n";
+				prefix+f.getName()+"\r\n";//$NON-NLS-1$
 		
 		if(writer != null){
 			writer.write(string);

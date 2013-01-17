@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.ui.javaeditor.breadcrumb;
 
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -18,10 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 
 
 /**
@@ -58,7 +60,6 @@ class BreadcrumbItem extends Item {
 	 */
 	public BreadcrumbItem(BreadcrumbViewer viewer, Composite parent) {
 		super(parent, SWT.NONE);
-
 		fParent= viewer;
 
 		fContainer= new Composite(parent, SWT.NONE);
@@ -186,6 +187,7 @@ class BreadcrumbItem extends Item {
 		fDetailsBlock.setText(text);
 		fDetailsBlock.setImage(image);
 		fDetailsBlock.setToolTip(toolTip);
+		
 
 		refreshArrow();
 	}
@@ -195,6 +197,7 @@ class BreadcrumbItem extends Item {
 	 */
 	void refreshArrow() {
 		fExpandBlock.setEnabled(fContentProvider.hasChildren(getData()));
+		fExpandBlock.setToolTip(fToolTipLabelProvider.getText(getData()));
 	}
 
 	/**
@@ -207,7 +210,27 @@ class BreadcrumbItem extends Item {
 
 		GridData data= (GridData) fContainer.getLayoutData();
 		data.grabExcessHorizontalSpace= isLast;
+		
+		fContainer.removeMouseListener(marginListener);
+		if(isLast){
+			fContainer.addMouseListener(marginListener);
+		}
 	}
+	
+	private MouseListener marginListener=new MouseAdapter() {
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			fParent.fireDoubleClick();
+		};
+		@Override
+		public void mouseDown(MouseEvent e) {
+			fParent.fireMouseDown(e);
+		};
+		@Override
+		public void mouseUp(MouseEvent e) {
+			fParent.fireMouseUp(e);
+		};
+	};
 
 	/**
 	 * Sets whether or not the this item should show the details (name and label).
@@ -266,6 +289,7 @@ class BreadcrumbItem extends Item {
 	 */
 	public void setToolTip(String text) {
 		fDetailsBlock.setToolTip(text);
+		fExpandBlock.setToolTip(text);
 	}
 
 	/*
@@ -277,8 +301,9 @@ class BreadcrumbItem extends Item {
 		fDetailsBlock.setText(string);
 
 		//more or less space might be required for the label
-		if (fIsLast)
+		if (fIsLast) {
 			fContainer.layout(true, true);
+		}
 	}
 
 	/*

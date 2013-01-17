@@ -13,16 +13,15 @@
  */
 package org.jeelee.filemanager.ui.views.model;
 
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
 
 import java.io.IOException;
 
+import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.FileUtils;
@@ -35,7 +34,7 @@ import org.jeelee.utils.AppLogging;
  * @since org.jeelee.filemanager Aug 8, 2012 
  * 
  */
-public class FileDropListener extends ViewerDropAdapter {
+public class FileDropListener extends ViewerDropAdapter implements TransferDropTargetListener{
 	private FileExplorer	fileViewer;
 
 	public FileDropListener(FileExplorer fileViewer,Viewer viewer) {
@@ -51,7 +50,7 @@ public class FileDropListener extends ViewerDropAdapter {
 	@Override
 	public boolean validateDrop(Object target, int operation,
 			TransferData transferType) {
-		return FileTransfer.getInstance().isSupportedType(transferType);
+		return getTransfer().isSupportedType(transferType);
 	}
 	@Override
 	public void drop(DropTargetEvent event) {
@@ -72,6 +71,7 @@ public class FileDropListener extends ViewerDropAdapter {
 		super.drop(event);
 	}
 	
+	
 	@Override
 	protected Object determineTarget(DropTargetEvent event) {
 		Object target= super.determineTarget(event);
@@ -79,5 +79,19 @@ public class FileDropListener extends ViewerDropAdapter {
 			target = fileViewer.getDefaultSelection();
 		}
 		return target;
+	}
+
+	@Override
+	public Transfer getTransfer() {
+		return FileTransfer.getInstance();
+	}
+
+	@Override
+	public boolean isEnabled(DropTargetEvent event) {
+		FileDelegate target = (FileDelegate)  determineTarget(event);
+		if(target==null){
+			return false;
+		}
+		return false;
 	}
 }

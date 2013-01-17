@@ -39,7 +39,7 @@ public class SimpleSharedImages {
 	
 	public static Image get(String key) {
 		Pair<Image, Integer> en = images.get(key);
-		if(en==null){
+		if(en==null  ){
 			return null;
 		}
 		en.setValue(en.getValue()+1);
@@ -54,13 +54,13 @@ public class SimpleSharedImages {
 		
 	}
 
-	public static void remove(String key) {
+	public static void pull(String key) {
 		Pair<Image, Integer> en = images.get(key);
 		if(en==null){
 			return;
 		}
-		int amount = en.getValue()-1;
-		if(amount==0){
+		en.setValue(en.getValue());
+		if( en.getValue()==0){
 			dispose(key);
 		}
 	}

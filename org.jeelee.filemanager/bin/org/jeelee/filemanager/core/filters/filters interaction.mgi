@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ClassDiagram>
+    <CommunicationClass
+        name="org.jeelee.filemanager.ui.views.model.SimpleValue" x="441" y="30"/>
+    <CommunicationClass
+        name="org.jeelee.filemanager.ui.views.model.FilterViewer" x="28" y="104">
+        <Communication destinationClassName="org.jeelee.filemanager.core.filters.CatalogFactory"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.ScopeCatalog" x="191" y="197">
+        <Extension destinationClassName="org.jeelee.filemanager.core.filters.DefaultCatalog"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.BaseAttributeFilter"
+        x="490" y="309">
+        <Extension destinationClassName="org.jeelee.filemanager.core.filters.AbstractFileFilter"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.DefaultCatalog"
+        x="427" y="136"/>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.SuffixCatalog" x="328" y="194">
+        <Extension destinationClassName="org.jeelee.filemanager.core.filters.DefaultCatalog"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.FileSuffixFactory"
+        x="120" y="326"/>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.CatalogFactory"
+        x="275" y="101">
+        <Communication destinationClassName="org.jeelee.filemanager.core.filters.ScopeCatalog"/>
+        <Communication destinationClassName="org.jeelee.filemanager.core.filters.SuffixCatalog"/>
+    </CommunicationClass>
+    <CommunicationClass
+        name="org.jeelee.filemanager.core.filters.AbstractFileFilter"
+        x="38" y="266"/>
+</ClassDiagram>
