@@ -21,28 +21,25 @@ import java.util.Set;
 /**
  * <B>ChineseUtils</B>
  * 
- * @author Zhi-Wu Chen. Email: <a href="mailto:c.zhiwu@gmail.com">c.zhiwu@gmail.com</a>
+ * @author Brook Tran . Email: <a href="mailto:c.brook.tran@gmail.com">c.brook.tran@gmail.com</a>
  * @version Ver 1.0.01 2012-2-14 created
  * @since Client Ver 1.0
  * 
  */
 public class ChineseUtils {
 
-	/**
-	 * °¢À­²®Êı×Ö
-	 */
 	private static Set<Character> araDigits = new HashSet<Character>();
 	/**
-	 * ºº×ÖÖĞµÄÊı×Ö×Ö·û
+	 * Chinese number
 	 */
-	private static char[] SCDigits = {'Áã','Ò»','¶ş','Èı','ËÄ','Îå','Áù','Æß','°Ë','¾Å','Ê®','°Ù','Ç§','Íò','ÒÚ'};
+	private static char[] SCDigits = {'é›¶','ä¸€','äºŒ','ä¸‰','å››','äº”','å…­','ä¸ƒ','å…«','ä¹','å','ç™¾','åƒ','ä¸‡','äº¿'};
 	
 	/**
-	 * ºº×ÖÖĞµÄ´óĞ´Êı×Ö×Ö·û
+	 * æ±‰å­—ä¸­çš„å¤§å†™æ•°å­—å­—ç¬¦
 	 */
-	private static char[] TCDigits = {'Áã','Ò¼','·¡','Èş','ËÁ','Îé','Â½','Æâ','°Æ','¾Á','Ê°','°Û','Çª','Íò','ÒÚ'};
+	private static char[] TCDigits = {'é›¶','å£¹','è´°','å','è‚†','ä¼','é™†','æŸ’','æŒ','ç–','æ‹¾','ä½°','ä»Ÿ','ä¸‡','äº¿'};
 	/**
-	 * ·±ÌåÖĞÎÄºÍ¼òÌåÖĞÎÄµÄ¶ÔÓ¦¹ØÏµ
+	 * ç¹ä½“ä¸­æ–‡å’Œç®€ä½“ä¸­æ–‡çš„å¯¹åº”å…³ç³»
 	 */
 	private static Map<Character,Character> map = new HashMap<Character,Character>();
 	static {
@@ -88,9 +85,8 @@ public class ChineseUtils {
 	
 	
 	/**
-	 * ½âÎöÖĞÎÄ¸ñÊ½µÄÊı×Ö£¬¼Ù¶¨²ÎÊıÖĞÈ«ÊÇºº×Ö£¬·ñÔò»á½âÎöÒì³££¬½âÎöÊ§°Ü·µ»Ønull
-	 * @param chinese
-	 * @return
+	 * è§£æä¸­æ–‡æ ¼å¼çš„æ•°å­—ï¼Œå‡å®šå‚æ•°ä¸­å…¨æ˜¯æ±‰å­—ï¼Œå¦åˆ™ä¼šè§£æå¼‚å¸¸ï¼Œè§£æå¤±è´¥è¿”å›null
+	 * 
 	 */
 	public static int  parseDigits(String chinese) {
 //		if (!isDigits(hanzi))
@@ -115,16 +111,18 @@ public class ChineseUtils {
 		return ArrayUtils.contains(SCDigits, charAt) || ArrayUtils.contains(TCDigits, charAt) ;
 	}
 	private static boolean isDigits(String s) {
-		if (s.charAt(0) == '+')
+		if (s.charAt(0) == '+') {
 			s = s.substring(1);
+		}
 		try {
 			Double.parseDouble(s);
 			return true;
 		} catch (Exception e) {
 			for (int i = 0; i < s.length(); i++) {
 				char c = s.charAt(i);
-				if (!map.values().contains(c) && !araDigits.contains(c))
+				if (!map.values().contains(c) && !araDigits.contains(c)) {
 					return false;
+				}
 			}
 			
 			return true;
@@ -137,56 +135,56 @@ public class ChineseUtils {
 		} else
 			if (start + 1 == end ) {
 			switch (chars[start]) {
-			case 'Ò»':
+			case 'ä¸€':
 			case '1':
 				ret = 1 * preNumber;
 				break;
-			case '¶ş':
+			case 'äºŒ':
 			case '2':
 				ret = 2 * preNumber;
 				break;
-			case 'Èı':
+			case 'ä¸‰':
 			case '3':
 				ret = 3 * preNumber;
 				break;
-			case 'ËÄ':
+			case 'å››':
 			case '4':
 				ret = 4 * preNumber;
 				break;
-			case 'Îå':
+			case 'äº”':
 			case '5':
 				ret = 5 * preNumber;
 				break;
-			case 'Áù':
+			case 'å…­':
 			case '6':
 				ret = 6 * preNumber;
 				break;
-			case 'Æß':
+			case 'ä¸ƒ':
 			case '7':
 				ret = 7 * preNumber;
 				break;
-			case '°Ë':
+			case 'å…«':
 			case '8':
 				ret = 8 * preNumber;
 				break;
-			case '¾Å':
+			case 'ä¹':
 			case '9':
 				ret = 9 * preNumber;
 				break;
 			}
 		} else {
 			int index;
-			if ((index = indexOf(chars,start,end,'Áã')) == 0 || (index = indexOf(chars,start,end,'0')) == 0) {
+			if ((index = indexOf(chars,start,end,'é›¶')) == 0 || (index = indexOf(chars,start,end,'0')) == 0) {
 				ret = parse(chars, start + 1, end, 1);
-			} else if ((index = indexOf(chars,start,end,'ÒÚ')) != -1) {
+			} else if ((index = indexOf(chars,start,end,'äº¿')) != -1) {
 				ret = parse(chars, start,index, 1) * 100000000 + parse(chars,index + 1,end,10000000);
-			} else if ((index = indexOf(chars,start,end,'Íò')) != -1) {
+			} else if ((index = indexOf(chars,start,end,'ä¸‡')) != -1) {
 				ret = parse(chars, start,index, 1) * 10000 + parse(chars,index + 1,end,1000);
-			} else if ((index = indexOf(chars,start,end,'Ç§')) != -1) {
+			} else if ((index = indexOf(chars,start,end,'åƒ')) != -1) {
 				ret = parse(chars, start, index, 1) * 1000 + parse(chars,index + 1,end,100);
-			} else if ((index = indexOf(chars,start,end,'°Ù')) != -1) {
+			} else if ((index = indexOf(chars,start,end,'ç™¾')) != -1) {
 				ret = parse(chars, start, index, 1) * 100 + parse(chars,index + 1,end,10);
-			} else if ((index = indexOf(chars,start,end,'Ê®')) != -1) {
+			} else if ((index = indexOf(chars,start,end,'å')) != -1) {
 				ret = parse(chars, start, index, 1) * 10 + parse(chars,index + 1,end,1);
 			}else{
 				ret =parse(chars, start, start+1, 1) *(int) Math.pow(10, end-start-1)
@@ -198,20 +196,22 @@ public class ChineseUtils {
 	}
 	private static int indexOf(char[] chars, int start, int end, char c) {
 		for (int i = start; i < end; i++) {
-			if (chars[i] == c)
+			if (chars[i] == c) {
 				return i;
+			}
 		}
 		return -1;
 	}
 	/**
-	 * ½«·±ÌåÖĞÎÄ×ª»»Îª¼òÌåÖĞÎÄ
+	 * å°†ç¹ä½“ä¸­æ–‡è½¬æ¢ä¸ºç®€ä½“ä¸­æ–‡
 	 * @param chars
 	 */
 	private static void changeTCtoSC(char[] chars) {
 		for (int i = 0; i < chars.length; i++) {
 			Character c = map.get(chars[i]);
-			if (c != null)
+			if (c != null) {
 				chars[i] = c;
+			}
 		}
 	}
 
@@ -231,8 +231,8 @@ public class ChineseUtils {
 /**
  * 
  * @author zxb
- * ½«Êı×Ö×ª»»ÎªÖĞÎÄ´óĞ´µÄºº×Ö  Âú×ã¼òµ¥Ê¹ÓÃµÄËÄÉáÎåÈëµÄ·¨Ôò
- * ±ÈÈç£º120023.235---->>>>>>>>Ò¼Ê°·¡ÍòÁã·¡Ê°ÈşÔ²·¡½ÇËÁ·Ö
+ * å°†æ•°å­—è½¬æ¢ä¸ºä¸­æ–‡å¤§å†™çš„æ±‰å­—  æ»¡è¶³ç®€å•ä½¿ç”¨çš„å››èˆäº”å…¥çš„æ³•åˆ™
+ * æ¯”å¦‚ï¼š120023.235---->>>>>>>>å£¹æ‹¾è´°ä¸‡é›¶è´°æ‹¾ååœ†è´°è§’è‚†åˆ†
  */
 	public static String toChineseCharacterWithRound(double money)  {
 		double temp = 0;
@@ -240,14 +240,14 @@ public class ChineseUtils {
 		BigDecimal bil = new BigDecimal(l);
 		if (bil.toString().length() > 14) {
 			return "";
-//			throw new Exception("Êı×ÖÌ«´ó£¬¼ÆËã¾«¶È²»¹»!");
+//			throw new Exception("æ•°å­—å¤ªå¤§ï¼Œè®¡ç®—ç²¾åº¦ä¸å¤Ÿ!");
 		}
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMaximumFractionDigits(2);
 		int i = 0;
 		String result = "", sign = "", tempStr = "", temp1 = "";
 		String[] arr = null;
-		sign = money < 0 ? "¸º" : "";
+		sign = money < 0 ? "è´Ÿ" : "";
 		temp = Math.abs(money);
 		if (l == temp) {
 			result = doForEach(new BigDecimal(temp).multiply(new BigDecimal(100)).toString(),
@@ -275,11 +275,11 @@ public class ChineseUtils {
 	}
 
 	public static String doForEach(String result, String sign) {
-		//System.out.println("´òÓ¡×îºó´¦ÀíÊı£º" + result);
+		//System.out.println("æ‰“å°æœ€åå¤„ç†æ•°ï¼š" + result);
 		String flag = "", b_string = "";
-		String[] arr = { "·Ö", "½Ç", "Ô²", "Ê°", "°Û", "Çª", "Íò", "Ê°", "°Û", "Çª", "ÒÚ",
-				"Ê°", "°Û", "Çª", "Íò", "Ê°" };
-		String[] arr1 = { "Ò¼", "·¡", "Èş", "ËÁ", "Îé", "Â½", "Æâ", "°Æ", "¾Á" };
+		String[] arr = { "åˆ†", "è§’", "åœ†", "æ‹¾", "ä½°", "ä»Ÿ", "ä¸‡", "æ‹¾", "ä½°", "ä»Ÿ", "äº¿",
+				"æ‹¾", "ä½°", "ä»Ÿ", "ä¸‡", "æ‹¾" };
+		String[] arr1 = { "å£¹", "è´°", "å", "è‚†", "ä¼", "é™†", "æŸ’", "æŒ", "ç–" };
 		boolean zero = true;
 		int len = 0, i = 0, z_count = 0;
 		if (result == null) {
@@ -298,21 +298,21 @@ public class ChineseUtils {
 						zero = false;
 					}
 					if (len - i == 10) {
-						b_string = b_string + "ÒÚ";
+						b_string = b_string + "äº¿";
 					}
 					if (len - i == 6) {
-						b_string = b_string + "Íò";
+						b_string = b_string + "ä¸‡";
 					}
 					if (len - i == 2) {
-						b_string = b_string + "Ô²";
+						b_string = b_string + "åœ†";
 					}
 					if (len == i) {
-						b_string = b_string + "Õû";
+						b_string = b_string + "æ•´";
 					}
 					z_count = 0;
 				} else {
 					if (z_count == 0) {
-						b_string = b_string + "Áã";
+						b_string = b_string + "é›¶";
 						zero = true;
 					}
 					z_count = z_count + 1;
@@ -341,7 +341,7 @@ public class ChineseUtils {
 		
 //		DateFormatSymbols dfs = DateFormatSymbols.getInstance();
 		
-		return (days==0?"":days+"Ìì")+(hours==0?"":hours+"Ğ¡Ê±")+
-				(minutes==0?"":minutes+"·ÖÖÓ")+(seconds==0?"":seconds+"Ãë");
+		return (days==0?"":days+"å¤©")+(hours==0?"":hours+"å°æ—¶")+
+				(minutes==0?"":minutes+"åˆ†é’Ÿ")+(seconds==0?"":seconds+"ç§’");
 	}
 }

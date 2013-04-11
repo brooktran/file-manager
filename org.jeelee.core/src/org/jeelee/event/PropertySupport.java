@@ -16,7 +16,7 @@ import java.beans.PropertyChangeListener;
 /**
  * <B>PropertySupport</B>
  * 
- * @author Zhi-Wu Chen. Email: <a href="mailto:c.zhiwu@gmail.com">c.zhiwu@gmail.com</a>
+ * @author Brook Tran . Email: <a href="mailto:c.brook.tran@gmail.com">c.brook.tran@gmail.com</a>
  * @version Ver 1.0.01 2012-4-18 created
  * @since Application Ver 1.0
  * 

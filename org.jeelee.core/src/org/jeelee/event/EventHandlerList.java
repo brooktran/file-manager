@@ -17,7 +17,7 @@ import javax.swing.event.EventListenerList;
 /**
  * <B>EventHandlerList</B>
  * 
- * @author Zhi-Wu Chen. Email: <a href="mailto:c.zhiwu@gmail.com">c.zhiwu@gmail.com</a>
+ * @author Brook Tran . Email: <a href="mailto:c.brook.tran@gmail.com">c.brook.tran@gmail.com</a>
  * @version Ver 1.0.01 2012-4-16 created
  * @since persimmon Ver 1.0
  * 

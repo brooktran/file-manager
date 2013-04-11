@@ -4,6 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Stack;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,10 +61,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.wb.swt.ResourceManager;
@@ -70,7 +74,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.jeelee.event.AbstractBean;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
-import org.jeelee.filemanager.core.filters.KeyWordFilter;
 import org.jeelee.filemanager.core.operation.PathProvider;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
@@ -133,7 +136,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 			@Override
 			public void propertyChange(final PropertyChangeEvent evt) {
 				String propertyName = evt.getPropertyName();
-				if(propertyName.equals(KeyWordFilter.PROPERTY_KEYWORD)){
+				if(propertyName.equals(FileFilterDelegate.PROPERTY_KEYWORD)){
 					fTableViewer.getTable().getColumn(4).setWidth(fileFilter.getKeyword().isEmpty()?0:600);
 					fTableViewer.getTable().getColumn(4).setResizable(!fileFilter.getKeyword().isEmpty());
 				}
@@ -361,7 +364,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 
 
 	private void createSearchText(Composite parent) {
-		Composite composite = new Composite(parent, SWT.BORDER);
+		final Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
 		rl_composite.marginTop = 0;
@@ -373,17 +376,45 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		final Text searchText = new Text(composite, SWT.NONE );
 		searchText.setLayoutData(new RowData(71, SWT.DEFAULT));
 		searchText.setMessage(r.getString(Messages.SEARCH));
+		searchText.setText(fileFilter.getKeyword());
+		fileFilter.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(FileFilterDelegate.PROPERTY_KEYWORD.equals(evt.getPropertyName())){
+					searchText.setText(fileFilter.getKeyword());
+				}
+			}
+		});
+		
 
-		Label clearButton = new Label(composite, SWT.NONE);
-		clearButton.setImage(ResourceManager.getPluginImage(
-				"org.jeelee.filemanager", "icons/clear.png"));
-		clearButton.setBackground(SWTResourceManager
-				.getColor(SWT.COLOR_LIST_BACKGROUND));
+		
+		final Label clearButton = new Label(composite, SWT.NONE);
+		clearButton.setImage(r.getImage(Messages.CLEAR));
 		clearButton.setToolTipText(r.getString(Messages.CLEAR));
-
+		clearButton.setLayoutData(new RowData());
+		((RowData)clearButton.getLayoutData()).exclude=true;
+		
+		
+		
+		
 		searchText.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyPressed(KeyEvent e) {
+			public void keyReleased(KeyEvent e) {
+				String keyword = searchText.getText();
+				boolean empty = keyword.isEmpty();
+				((RowData)clearButton.getLayoutData()).exclude=empty;
+				composite.layout(true);
+				composite.getParent().layout(true);
+				
+				if (empty) {
+					fileFilter.setKeyword(keyword);
+					return;
+				}
+	
+				if (e.keyCode == SWT.CR) {
+					fileFilter.setKeyword(keyword);
+				}
+				
 				// on a CR we want to transfer focus to the list
 				boolean hasItems = fTableViewer.getTable().getItemCount() > 0;
 				if (hasItems && e.keyCode == SWT.ARROW_DOWN) {
@@ -426,7 +457,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		fTableViewer.setColumnProperties(new String[] {
 				Messages.NAME,Messages.LAST_MODIFIED_DAY,
 				Messages.SIZE,Messages.TYPE,Messages.PATH});
-		fTableViewer.setCellModifier(new FileDelegateCellModifier(fTableViewer));
+		fTableViewer.setCellModifier(new FileDelegateCellModifier(fTableViewer,this));
 
 		int columnIndex=0;
 		TableViewerColumn nameColumn =
@@ -677,26 +708,6 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	};
 	private Composite toolbar;
 	private Composite container;
-//	private Composite container;
-//	private Composite toolbar;
-
-//	class FilterView extends ToolTip{
-////		private Button btnRegexGenerator ;
-//		private Composite composite ;
-//		public FilterView(Control control) {
-//			super(control);
-//
-//		}
-//		@Override
-//		protected Composite createToolTipContentArea(Event event, Composite parent) {
-////			if(composite == null){
-//				FilterViewer filterViewer= new FilterViewer(parent,fileFilter);
-//				composite=filterViewer.getFilterView(); 
-////			}
-//			return composite;
-////			return FilterComposite.createFilterView(parent,fileFilter);
-//		}
-//	}
 
 	@Override
 	public void rename() {
@@ -778,6 +789,23 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		fTableViewer.removeSelectionChangedListener(listener);
 	}
 
+	
+	private IUndoContext undoContext;
+	@Override
+	public IUndoContext getUndoableContext() {
+		if(undoContext == null){
+			IUndoContext undoContext = new ObjectUndoContext(getSite().getWorkbenchWindow());
+			int limit = 1000; // TODO read from preference
+			FileManagerActivator.getOperationHistory().setLimit(undoContext, limit);
+		
+			UndoRedoActionGroup undoRedoActionGroup=new UndoRedoActionGroup(getSite(), undoContext, true);
+			IActionBars actionBars=getEditorSite().getActionBars();
+			undoRedoActionGroup.fillActionBars(actionBars);
+			
+			this.undoContext=new ObjectUndoContext(this);
+		}
+		return undoContext;
+	}
 	
 	
 	

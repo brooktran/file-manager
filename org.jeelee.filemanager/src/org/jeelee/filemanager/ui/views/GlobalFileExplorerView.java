@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,6 +33,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
@@ -78,7 +82,7 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 		viewer.setUseHashlookup(true);
 		viewer.setCellEditors(new CellEditor[] {
 				new TextCellEditor(viewer.getTree(), SWT.BORDER) });
-		viewer.setCellModifier(new FileDelegateCellModifier(viewer));
+		viewer.setCellModifier(new FileDelegateCellModifier(viewer,this));
 		viewer.setColumnProperties(new String[] {Messages.NAME});
 		viewer.setAutoExpandLevel(1);
 		
@@ -297,6 +301,28 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		viewer.removeSelectionChangedListener(listener);
+	}
+
+	
+	
+	private IUndoContext fUndoContext;
+	@Override
+	public IUndoContext getUndoableContext() {
+		if(fUndoContext == null){
+			fUndoContext=new ObjectUndoContext(this);
+
+			
+			IUndoContext undoContext = new ObjectUndoContext(getSite().getWorkbenchWindow());
+			int limit = 1000; // TODO read from preference
+			PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().setLimit(undoContext, limit);
+		
+			
+			
+			UndoRedoActionGroup undoRedoActionGroup=new UndoRedoActionGroup(getSite(), this.fUndoContext, true);
+			IActionBars actionBars=getViewSite().getActionBars();
+			undoRedoActionGroup.fillActionBars(actionBars);
+		}
+		return fUndoContext;
 	}
 	
 }

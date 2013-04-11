@@ -37,10 +37,6 @@ public abstract class FileSystemOperation  extends AbstractReproducibleOperation
 	}
 
 	@Override
-	public boolean canUndo() {
-		return false;
-	}
-	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
 		return null;

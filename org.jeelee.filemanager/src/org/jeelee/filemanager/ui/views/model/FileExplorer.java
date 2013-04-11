@@ -10,6 +10,7 @@
  */
 package org.jeelee.filemanager.ui.views.model;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -41,5 +42,6 @@ public interface FileExplorer  extends PropertySupport ,ISelectionProvider{
 	@Override
 	void setSelection(ISelection selection);
 	FileFilterDelegate getFilter();
+	IUndoContext getUndoableContext();
 
 }

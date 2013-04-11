@@ -30,7 +30,7 @@ package org.jeelee.utils;
 ///**
 // * <B>Compresser</B>
 // * 
-// * @author Zhi-Wu Chen. Email: <a href="mailto:c.zhiwu@gmail.com">c.zhiwu@gmail.com</a>
+// * @author Brook Tran . Email: <a href="mailto:c.brook.tran@gmail.com">c.brook.tran@gmail.com</a>
 // * @version Ver 1.0.01 2012-2-14 created
 // * @since Client Ver 1.0
 // * 
@@ -56,7 +56,7 @@ package org.jeelee.utils;
 //			ze =en.nextElement();
 //			File f =new File(outPath,ze.getName());
 //			 
-//			//´´½¨ÍêÕûÂ·¾¶
+//			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
 //			if(ze.isDirectory()){    
 //				f.mkdirs();
 //				continue;
@@ -143,7 +143,7 @@ package org.jeelee.utils;
 //			entryName =f.getName();
 //		
 //		if(f.isDirectory())
-//			entryName +="/";//"/"ºó×º±íÊ¾entryÊÇÎÄ¼þ¼Ð
+//			entryName +="/";//"/"ï¿½ï¿½×ºï¿½ï¿½Ê¾entryï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
 //		return entryName;
 //	}
 //

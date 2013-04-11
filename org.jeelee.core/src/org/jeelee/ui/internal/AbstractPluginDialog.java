@@ -20,7 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * <B>AbstractPluginDialog</B>
  * 
- * @author Zhi-Wu Chen. Email: <a href="mailto:c.zhiwu@gmail.com">c.zhiwu@gmail.com</a>
+ * @author Brook Tran . Email: <a href="mailto:c.brook.tran@gmail.com">c.brook.tran@gmail.com</a>
  * @version Ver 1.0.01 2012-5-22 created
  * @since org.jeelee.core Ver 1.0
  * 

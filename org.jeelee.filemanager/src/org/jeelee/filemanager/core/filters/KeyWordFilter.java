@@ -25,7 +25,6 @@ import org.jeelee.regex.utils.RegexBuilder;
  * @since org.jeelee.filemanager 2012-12-9 created
  */
 public class KeyWordFilter extends AbstractFileFilter {
-	public static final String PROPERTY_KEYWORD = "keyword";
 	private static final int ERROR_STYLE=-1;
 
 	public static final int	IN_FRONT		= 1 << 1;
@@ -155,7 +154,7 @@ public class KeyWordFilter extends AbstractFileFilter {
 			pattern = Pattern.compile(keyword);
 		}
 		System.out.println(pattern.pattern());
-		firePropertyChanged(PROPERTY_KEYWORD, this.keyword, this.keyword = keyword);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_KEYWORD, this.keyword, this.keyword = keyword);
 	}
 	
 	

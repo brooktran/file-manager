@@ -19,15 +19,6 @@ import org.jeelee.filemanager.core.FileDelegate;
  * @since org.jeelee.filemanager 2012-12-9 created
  */
 public class BaseAttributeFilter extends AbstractFileFilter{
-	private static final String PROPERTY_INCLUDE_SUBFOLDERS="includeSubFolders";
-	private static final String PROPERTY_SEARCH_FILE_CONTENT="searchFileContent";
-	private static final String PROPERTY_SEARCH_ARCHIVES="searchArchives";
-	private static final String PROPERTY_INCLUDE_HIDEN="includeHiden";
-	private static final String PROPERTY_INCLUDE_SYSTEM_FILE="includeSystemFile";
-	private static final String PROPERTY_INCLUDE_READ_ONLY="includeReadOnly";
-	private static final String PROPERTY_DISPLAY_FOLDER="isDisplayFolder";
-	private static final String PROPERTY_DISPLAY_FILE="isDisplayFile";
-	
 	
 	private boolean includeSubFolders = false;
 	private boolean searchFileContent = false;
@@ -42,25 +33,25 @@ public class BaseAttributeFilter extends AbstractFileFilter{
 		return includeSubFolders;
 	}
 	public void setIncludeSubFolders(boolean includeSubFolders) {
-		firePropertyChanged(PROPERTY_INCLUDE_SUBFOLDERS, this.includeSubFolders, this.includeSubFolders = includeSubFolders);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_INCLUDE_SUBFOLDERS, this.includeSubFolders, this.includeSubFolders = includeSubFolders);
 	}
 	public boolean isSearchFileContent() {
 		return searchFileContent;
 	}
 	public void setSearchFileContent(boolean searchFileContent) {
-		firePropertyChanged(PROPERTY_SEARCH_FILE_CONTENT, this.searchFileContent, this.searchFileContent = searchFileContent);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SEARCH_FILE_CONTENT, this.searchFileContent, this.searchFileContent = searchFileContent);
 	}
 	public boolean isSearchArchives() {
 		return searchArchives;
 	}
 	public void setSearchArchives(boolean searchArchives) {
-		firePropertyChanged(PROPERTY_SEARCH_ARCHIVES, this.searchArchives, this.searchArchives = searchArchives);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SEARCH_ARCHIVES, this.searchArchives, this.searchArchives = searchArchives);
 	}
 	public boolean isIncludeHiden() {
 		return includeHiden;
 	}
 	public void setIncludeHiden(boolean includeHiden) {
-		firePropertyChanged(PROPERTY_INCLUDE_HIDEN, this.includeHiden, this.includeHiden = includeHiden);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_INCLUDE_HIDEN, this.includeHiden, this.includeHiden = includeHiden);
 	}
 
 	public boolean isIncludeSystemFile() {
@@ -68,7 +59,7 @@ public class BaseAttributeFilter extends AbstractFileFilter{
 	}
 	
 	public void setIncludeSystemFile(boolean includeSystemFile) {
-		firePropertyChanged(PROPERTY_INCLUDE_SYSTEM_FILE, this.includeSystemFile, this.includeSystemFile = includeSystemFile);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_INCLUDE_SYSTEM_FILE, this.includeSystemFile, this.includeSystemFile = includeSystemFile);
 	}
 
 	public boolean isIncludeReadOnly() {
@@ -76,7 +67,7 @@ public class BaseAttributeFilter extends AbstractFileFilter{
 	}
 
 	public void setIncludeReadOnly(boolean includeReadOnly) {
-		firePropertyChanged(PROPERTY_INCLUDE_READ_ONLY, this.includeReadOnly, this.includeReadOnly = includeReadOnly);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_INCLUDE_READ_ONLY, this.includeReadOnly, this.includeReadOnly = includeReadOnly);
 	}
 
 	public boolean isDisplayFolder() {
@@ -84,14 +75,14 @@ public class BaseAttributeFilter extends AbstractFileFilter{
 	}
 
 	public void setDisplayFolder(boolean isDisplayFolder) {
-		firePropertyChanged(PROPERTY_DISPLAY_FOLDER, this.isDisplayFolder, this.isDisplayFolder = isDisplayFolder);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_DISPLAY_FOLDER, this.isDisplayFolder, this.isDisplayFolder = isDisplayFolder);
 	}
 	public boolean isDisplayFile() {
 		return isDisplayFile;
 	}
 
 	public void setDisplayFile(boolean isDisplayFile) {
-		firePropertyChanged(PROPERTY_DISPLAY_FILE, this.isDisplayFile, this.isDisplayFile = isDisplayFile);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_DISPLAY_FILE, this.isDisplayFile, this.isDisplayFile = isDisplayFile);
 	}
 
 	@Override

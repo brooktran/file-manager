@@ -470,7 +470,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 			Path newPath = source.getParent().resolve(newName);
 			source=Files.move(source, newPath);
 
-			clearCachedAttributes(DISPLAY_NAME);
+			clearCachedAttributes(DISPLAY_NAME,SYSTEM_TYPE_DESCRIPTION);
 			firePropertyChanged(Messages.RENAME, oldName, newName);
 		} catch (IOException e) {
 			AppLogging.handleException(e);
@@ -550,7 +550,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 		if (isDirectory()) {
 			deleteDirectory(source);
 		}
-		Files.delete(source);
+		Files.deleteIfExists(source);
 	}
 
 
@@ -561,7 +561,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 			if(Files.isDirectory(child)){
 				deleteDirectory(child);
 			}
-			Files.delete(child);
+			Files.deleteIfExists(child);
 		}
 	}
 

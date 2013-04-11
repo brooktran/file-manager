@@ -10,6 +10,12 @@
  */
 package org.jeelee.filemanager.core.operation;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.jeelee.filemanager.ui.views.model.FileExplorer;
+import org.jeelee.utils.AppLogging;
+
 /**
  * <B>OperationExecutor</B>
  * 
@@ -17,7 +23,26 @@ package org.jeelee.filemanager.core.operation;
  * @since org.jeelee.filemanager Jan 7, 2013 created
  */
 public class OperationExecutor {
-	public static void execute(){
+
+	public static void runOperationJob(final IUndoableOperation op,
+			final FileExplorer fileExplorer) {
+//		JobRunner.runShortUserJob(new Job(op.getLabel()) {
+//			@Override
+//			protected IStatus run(IProgressMonitor monitor) {
+				try {
+//					monitor.setTaskName(op.getLabel());
+//					monitor.beginTask(op.getLabel(), selection.size());
+					op.addContext(fileExplorer.getUndoableContext()); 
+					OperationHistoryFactory
+								.getOperationHistory().execute(op,
+											null, null);
+				} catch (ExecutionException e) {
+					AppLogging.handleException(e);
+//					return Status.CANCEL_STATUS;
+				}
+//				return Status.OK_STATUS;
+//			}
+//		});
 		
 	}
 }

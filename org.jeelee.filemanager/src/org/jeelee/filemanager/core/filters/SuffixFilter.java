@@ -24,7 +24,6 @@ import org.jeelee.utils.ArrayUtils;
  * @since org.jeelee.filemanager 2012-12-8 created
  */
 public class SuffixFilter extends AbstractFileFilter{
-	public static final String PROPERTY_SUFFIX_FILTER_CHANGED="suffix.filter";//$NON-NLS-1$
 	
 	private Set<String> suffixes;
 	private Set<SuffixCatalog> catalogs;
@@ -68,7 +67,7 @@ public class SuffixFilter extends AbstractFileFilter{
 		for(String s:suffixes){
 			this.suffixes.add(s.toLowerCase());
 		}
-		firePropertyChanged(PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
 	}
 
 
@@ -77,15 +76,14 @@ public class SuffixFilter extends AbstractFileFilter{
 		for(String s:suffixes){
 			this.suffixes.remove(s);
 		}
-		firePropertyChanged(PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
 	}
 
 
 
 	public void addCatalog(SuffixCatalog catalog) {
 		catalogs.add(catalog);
-//		addSuffixes(catalog.getSuffixes());
-		firePropertyChanged(PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
 	}
 
 
@@ -93,7 +91,7 @@ public class SuffixFilter extends AbstractFileFilter{
 	public void removeCatalog(SuffixCatalog catalog) {
 		catalogs.remove(catalog);
 //		removeSuffixes(catalog.getSuffixes());
-		firePropertyChanged(PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
 	}
 
 
@@ -113,7 +111,7 @@ public class SuffixFilter extends AbstractFileFilter{
 	public void reset() {
 		catalogs.clear();
 		suffixes.clear();
-		firePropertyChanged(PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
+		firePropertyChanged(FileFilterDelegate.PROPERTY_SUFFIX_FILTER_CHANGED, null, this);
 	}
 
 	public Iterator<String> iterator(){

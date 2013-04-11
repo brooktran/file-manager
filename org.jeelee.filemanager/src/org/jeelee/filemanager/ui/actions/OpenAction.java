@@ -25,10 +25,6 @@ public class OpenAction extends UndoableAction  {
 		FileManagerActivator.RESOURCES.configAction(this,ID );
 	}
 
-//	private String[] getButtonLabels() {
-//		return new String[]{r.getString(Messages.ONE_AFTER_ONE),r.getString(Messages.CONCURRENT),JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY)};
-//	}
-
 	@Override
 	protected IUndoableOperation getOperation(final IStructuredSelection selection) {
 		OpenOperation op = new OpenOperation(getPathProvider());
@@ -39,7 +35,6 @@ public class OpenAction extends UndoableAction  {
 				boolean concurrent = store.getBoolean(IPreferenceConstants.MUTIL_FILE_ORDER_CURRENT);
 				op.setOrder(concurrent?ExecuteOrder.CONCURRENT:ExecuteOrder.ONE_AFTER_ONE);
 			}else {
-
 				MessageDialogWithToggle dialog = new MessageDialogWithToggle(getShell(), r.getString(Messages.OPEN), null, r.getString(Messages.OPEN_MULTI_FILES_TIPS), MessageDialogWithToggle.QUESTION, getButtonLabels(), 0, r.getString(Messages.DONT_ASK_ME_AGAIN), false);
 				dialog.setPrefStore(store);
 				dialog.setPrefKey(IPreferenceConstants.NEVER_PROMPT_ON_OPEN_MUTIL_FILES);

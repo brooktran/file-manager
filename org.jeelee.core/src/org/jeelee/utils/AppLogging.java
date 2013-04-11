@@ -34,7 +34,7 @@ import org.jeelee.ui.internal.JeeleePlatformUI;
 /**
  * <B>AppLogging</B>
  * 
- * @author Zhi-Wu Chen. Email: <a href="mailto:c.zhiwu@gmail.com">c.zhiwu@gmail.com</a>
+ * @author Brook Tran . Email: <a href="mailto:c.brook.tran@gmail.com">c.brook.tran@gmail.com</a>
  * @version Ver 1.0.01 2010-12-7 created
  * @since org.zhiwu.utils Ver 1.0
  * 

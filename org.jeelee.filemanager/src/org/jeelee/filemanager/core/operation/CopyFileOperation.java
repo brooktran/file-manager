@@ -15,9 +15,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.jeelee.filemanager.core.FileDelegate;
+import org.jeelee.filemanager.ui.FileManagerActivator;
+import org.jeelee.filemanager.ui.Messages;
+import org.jeelee.utils.JobRunner;
 
 /**
  * <B>CopyOperation</B>
@@ -36,13 +40,21 @@ public class CopyFileOperation extends CopyPathOperation{
 			throws ExecutionException {
 		FileDelegate[] files = pathProvider.getSource();
 		
-		String[] paths = new String[files.length] ;
+		final String[] paths = new String[files.length] ;
 		for(int i=0;i<paths.length ;i++){
 			paths[i] = files[i].getAbsolutePath();
 		}
-		Transfer[] transferTypes  = { FileTransfer.getInstance() };
-		Object[] data = {paths};
-		transferTo(transferTypes , data);
+		
+		JobRunner.runShortUserJob(new Job(FileManagerActivator.RESOURCES.getString(Messages.MOVE)) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				Transfer[] transferTypes  = { FileTransfer.getInstance() };
+				Object[] data = {paths};
+				transferTo(transferTypes , data);
+				
+				return Status.OK_STATUS;
+			}
+		});
 		
 		return Status.OK_STATUS;
 	}

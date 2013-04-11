@@ -11,16 +11,12 @@
  */
 package org.jeelee.filemanager.ui.views.model;
 
-import java.nio.file.FileAlreadyExistsException;
-
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Item;
-import org.jeelee.core.JeeleeActivator;
-import org.jeelee.core.JeeleeMessages;
 import org.jeelee.filemanager.core.FileDelegate;
-import org.jeelee.filemanager.ui.FileManagerActivator;
+import org.jeelee.filemanager.core.operation.OperationExecutor;
+import org.jeelee.filemanager.core.operation.RenameOperation;
 import org.jeelee.filemanager.ui.Messages;
 
 /**
@@ -34,8 +30,10 @@ import org.jeelee.filemanager.ui.Messages;
 public final class FileDelegateCellModifier implements ICellModifier {
 
 	private ColumnViewer viewer;
-	public FileDelegateCellModifier(ColumnViewer viewer){
+	private FileExplorer fileExplorer;
+	public FileDelegateCellModifier(ColumnViewer viewer,FileExplorer fileExplorer){
 		this.viewer = viewer;  
+		this.fileExplorer = fileExplorer;
 	}
 
 	@Override
@@ -46,29 +44,19 @@ public final class FileDelegateCellModifier implements ICellModifier {
 			if(file.getName().equals(value)){
 				return;
 			}
-			renameTo(file, value.toString());
-
-			viewer.update(file, null);
-			//			treeViewer.refresh(file);
-			//			
-			//			List<FileDelegate> path=new LinkedList<FileDelegate>();
-			//			path.add(file);
-			//			for(FileDelegate parent = file.getParent();parent!=null;parent=parent.getParent()){
-			//				path.add(0,parent);
-			//			}
-			//			treeViewer.setSelection(new TreeSelection(new TreePath(path.toArray())));
+			RenameOperation op = new RenameOperation(file, value.toString());
+			OperationExecutor.runOperationJob(op, fileExplorer);
+			
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			viewer.update(file,null);
 		}
 	}
 
-	private void renameTo(FileDelegate file, String newName) {
-		try {
-			file.renameTo( newName);
-		} catch (FileAlreadyExistsException e) {
-			MessageDialog.openConfirm(viewer.getControl().getShell(), 
-					JeeleeActivator.RESOURCE.getString(JeeleeMessages.ERROR),
-					FileManagerActivator.RESOURCES.getString(Messages.FILE_ALREADY_EXISTS));
-		}
-	}
+	
 
 	@Override
 	public Object getValue(Object element, String property) {

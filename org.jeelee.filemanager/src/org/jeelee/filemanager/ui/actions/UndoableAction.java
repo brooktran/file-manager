@@ -10,21 +10,12 @@
  */
 package org.jeelee.filemanager.ui.actions;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.ObjectUndoContext;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.jeelee.filemanager.core.operation.OperationExecutor;
 import org.jeelee.filemanager.core.operation.PathProvider;
 import org.jeelee.filemanager.core.operation.SimplePathProvider;
-import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
-import org.jeelee.utils.AppLogging;
-import org.jeelee.utils.JobRunner;
 
 /**
  * <B>UndoableAction</B>
@@ -33,14 +24,8 @@ import org.jeelee.utils.JobRunner;
  * @since org.jeelee.filemanager 2012-9-25 created
  */
 public abstract class UndoableAction extends SelectionDispatchAction{
-	private IUndoContext undoContext;
-
 	protected UndoableAction(FileExplorer fileExplorer) {
 		super(fileExplorer);
-		
-		undoContext = new ObjectUndoContext(fileExplorer);
-		int limit = 1000; // TODO read from preference
-		FileManagerActivator.getOperationHistory().setLimit(undoContext, limit);
 	}
 
 	
@@ -50,21 +35,7 @@ public abstract class UndoableAction extends SelectionDispatchAction{
 		if(op == null){
 			return;
 		}
-		JobRunner.runShortUserJob(new Job(getText()) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					monitor.beginTask(getText(), selection.size());
-					op.addContext(undoContext);
-					FileManagerActivator.getOperationHistory().execute(op,
-							monitor, null);
-				} catch (ExecutionException e) {
-					AppLogging.handleException(e);
-					return Status.CANCEL_STATUS;
-				}
-				return Status.OK_STATUS;
-			}
-		});
+		OperationExecutor.runOperationJob(op,fileExplorer);
 		
 	}
 	protected PathProvider getPathProvider() {

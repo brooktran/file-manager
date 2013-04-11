@@ -20,6 +20,19 @@ import org.jeelee.filemanager.ui.Messages;
 import org.jeelee.utils.PeriodFactory;
 
 public class FileFilterDelegate  extends DefaultCompositeFileFilter implements PropertySupport{
+	public static final String PROPERTY_KEYWORD = "keyword";
+
+	public static final String PROPERTY_INCLUDE_SUBFOLDERS="includeSubFolders";
+	public static final String PROPERTY_SEARCH_FILE_CONTENT="searchFileContent";
+	public static final String PROPERTY_SEARCH_ARCHIVES="searchArchives";
+	public static final String PROPERTY_INCLUDE_HIDEN="includeHiden";
+	public static final String PROPERTY_INCLUDE_SYSTEM_FILE="includeSystemFile";
+	public static final String PROPERTY_INCLUDE_READ_ONLY="includeReadOnly";
+	public static final String PROPERTY_DISPLAY_FOLDER="isDisplayFolder";
+	public static final String PROPERTY_DISPLAY_FILE="isDisplayFile";
+	
+	public static final String PROPERTY_SUFFIX_FILTER_CHANGED="suffix.filter";//$NON-NLS-1$
+
 	
 	class SimpleVisitor{// for display in current view
 		private Map<String, Integer> suffixes;
@@ -75,6 +88,7 @@ public class FileFilterDelegate  extends DefaultCompositeFileFilter implements P
 			return VisitResult.successed;
 		}
 	}
+
 
 
 

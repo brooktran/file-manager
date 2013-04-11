@@ -137,28 +137,6 @@ public abstract class JeeleeFileSystem {
 	    return null;
 	}
 
-//	public static FileInfo getFileInfo(File source) {
-//		String drive = null;
-//		String full_path = null;
-//		String parent_path = null;
-//		String file_name = null;
-//		full_path = source.toString();
-//
-//		if (source.isDirectory()) {
-//			parent_path = source.getPath();
-//			file_name = "dir";
-//		} else {
-//			parent_path = source.getParent();
-//			file_name = source.getName();
-//		}
-//		if (full_path != null) {
-//			if (full_path.indexOf(":") != -1) {
-//				drive = full_path.substring(0, full_path.indexOf(":"));
-//			}
-//		}
-//		FileInfo info = new FileInfo(drive, full_path, parent_path, file_name);
-//		return info;
-//	}
 
 	public static FileFilterDelegate getGlobalFilter() {
 		return fileFilter;
