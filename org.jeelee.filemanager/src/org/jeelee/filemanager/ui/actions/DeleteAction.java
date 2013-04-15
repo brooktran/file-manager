@@ -64,6 +64,7 @@ public class DeleteAction extends SelectionDispatchAction{
 					Iterator it=selection.iterator();
 					while(it.hasNext()){
 						FileDelegate file =(FileDelegate) it.next();
+						file.getParent().getChildren().remove(file);
 						file.delete();
 					}
 					fileExplorer.refresh();

@@ -103,6 +103,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 		setResolving(true);
 
 		if(isContentsInitialized()){
+			setResolving(false);
 			return getChildren().size();
 		}
 
@@ -119,6 +120,9 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 
 				for (Path child : ds) {
 					FileDelegate entry = new FileDelegate(child);
+					if(!Files.exists(child)){
+						continue;
+					}
 					if (entry.isDirectory()) {
 						addChild(entry);
 					} else {
@@ -133,15 +137,14 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 			AppLogging.handleException(e);
 		} finally {
 			setResolving(false);
+			setContentsInitialized(success);
 		}
-		setContentsInitialized(success);
-
 		return count;
 	}
 
 
 	public void refresh() {
-		if (resolving) {
+		if (isResolving()) {
 			return;
 		}
 		

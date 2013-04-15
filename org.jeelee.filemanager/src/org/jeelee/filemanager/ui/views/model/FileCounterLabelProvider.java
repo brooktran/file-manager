@@ -11,7 +11,7 @@ public class FileCounterLabelProvider extends FileDelegateLableProvider{
 
 		if(file.isDirectory()){
 			if(file.isContentsInitialized()){
-				name +=  " (" + file.getChildren().size() + ")"; 
+				name +=  " [" + file.getChildren().size() + "]"; 
 			}
 //			else {
 //				name += " "+r.getString(Messages.FetchingContent); 
