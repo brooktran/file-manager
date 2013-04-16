@@ -209,6 +209,9 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	@Override
 	public void dispose() {
 //		tableViewer.getTable().dispose();
+		if(filterDialog!=null){
+			filterDialog.close();
+		}
 		fileFilter.getSource().removePropertyChangeListener(refreshListener);
 		super.dispose();
 	}
@@ -971,6 +974,7 @@ class FileViewerComparator extends ViewerColumnComparator{
 
 		FileDelegate f1 = (FileDelegate) e1;
 		FileDelegate f2 = (FileDelegate) e2 ;
+		
 		int rc =0;
 		switch (propertyIndex) {
 		case 0:
@@ -1017,31 +1021,48 @@ class FileViewerComparator extends ViewerColumnComparator{
                 return 1;
             }
 			
-			char ch1 = name.charAt(i);
-            char ch2 = name2.charAt(i);
+			Character ch1 = name.charAt(i);
+			Character ch2 = name2.charAt(i);
             
-            if (ch1 >= '0' && ch2 <= '9') {
-                int i1 = getNumber(name.substring(i));
-                int i2 = getNumber(name2.substring(i));
-                if (i1 == i2) {
-                    continue;
-                } else {
-                    return i1 - i2;
-                }
-            } else if (ch1 != ch2) {
-                return ch1 - ch2;
+            if ( isNumber(ch1) && isNumber(ch2)) {
+            	int result = compareNumber(name.substring(i),name2.substring(i));
+            	if(result==0){
+            		i+= bits-1;
+            		continue;
+            	}else{
+            		return result;
+            	}
+            	
+            } else if (!ch1.equals(ch2)) {
+            	System.out.println(ch1-ch2);
+                return ch1.compareTo(ch2);
             }
-
 		}
-		
-		
 		return 0;
 	}
 
+	private boolean isNumber(Character c) {
+		return c >= '0' && c <= '9';
+	}
+	
+
+	private int compareNumber(String name, String name2) {
+		Integer i1 = getNumber(name);
+		Integer i2 = getNumber(name2);
+        if (i1.equals(i2)) {
+            return 0;
+        } else {
+            return i1.compareTo(i2);
+        }		
+	}
+
+	private static final int MaxBit=8;
+	private int bits;
+	private final int IllegalValue = Integer.MAX_VALUE;
 	private int getNumber(String str) {
-		int num = Integer.MAX_VALUE;
-        int bits = 0;
-        for (int i = 0; i < str.length(); i++) {
+		int num = IllegalValue;
+		bits = 0;
+        for (int i = 0; i < str.length() && bits<MaxBit; i++) {
             if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
                 bits++;
             } else {
