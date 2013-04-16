@@ -64,10 +64,15 @@ public class DeleteAction extends SelectionDispatchAction{
 					Iterator it=selection.iterator();
 					while(it.hasNext()){
 						FileDelegate file =(FileDelegate) it.next();
-						file.getParent().getChildren().remove(file);
+						file.getParent().remove(file);
 						file.delete();
 					}
-					fileExplorer.refresh();
+					fileExplorer.getShell().getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							fileExplorer.refresh();
+						}
+					});
 					return Status.OK_STATUS;
 				}catch (Exception e) {
 					return Status.CANCEL_STATUS;

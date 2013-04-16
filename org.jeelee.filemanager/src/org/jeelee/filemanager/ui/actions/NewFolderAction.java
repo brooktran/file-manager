@@ -12,6 +12,8 @@ package org.jeelee.filemanager.ui.actions;
 
 import java.io.IOException;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.FileHelper;
 import org.jeelee.filemanager.ui.FileManagerActivator;
@@ -38,7 +40,13 @@ public class NewFolderAction extends CreationAction{
 
 	@Override
 	protected FileDelegate execute(FileDelegate parent, String value) throws IOException {
-		return FileHelper.createDirectories(parent,value);
+		try {
+			FileDelegate result = FileHelper.createDirectories(parent,value);
+			return result;
+		} catch (Exception e) {
+			MessageDialog.openInformation(fileExplorer.getShell(), r.getString(Messages.ERROR), "can't create folder "+value);//TODO I18N
+			return null;
+		}
 	}
 
 

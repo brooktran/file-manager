@@ -70,11 +70,14 @@ public abstract class CreationAction extends SelectionDispatchAction{
 		if(dialog.open() == InputDialog.OK){
 			try {
 				final FileDelegate file = execute(parent,dialog.getValue());
+				if(file == null ){
+					return;
+				}
 				PropertyChangeListener listener = new PropertyChangeListener() {
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
 						if(evt.getPropertyName().equals(FileExplorer.REFRESHED_PROPERTY)){
-							fileExplorer.getShell().getDisplay().syncExec(new Runnable() {
+							fileExplorer.getShell().getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
 									fileExplorer.setSelection(new StructuredSelection(file));

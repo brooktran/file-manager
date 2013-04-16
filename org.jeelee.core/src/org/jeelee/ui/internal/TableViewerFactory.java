@@ -89,6 +89,10 @@ public class TableViewerFactory {
 				tableViewer.getTable().setSortColumn(viewerColumn.getColumn());
 				tableViewer.refresh();
 			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
 		};
 		return selectionAdapter;
 	}

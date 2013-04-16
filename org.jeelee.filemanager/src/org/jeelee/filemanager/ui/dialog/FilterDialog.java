@@ -22,27 +22,30 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
+import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.views.model.FilterViewer;
+import org.jeelee.ui.internal.AbstractPluginDialog;
 
 /**
  * <B>FilterDialog</B>
  * 
  * @author Brook Tran. Email: <a href="mailto:Brook.Tran.C@gmail.com">Brook.Tran.C@gmail.com</a>
- * @since org.jeelee.filemanager 3:37:00 AM 
+ * @since org.jeelee.filemanager  
  * 
  */
-public class FilterDialog extends Dialog {
+public class FilterDialog extends AbstractPluginDialog {
 
 	private FileFilterDelegate fileFilter;
 	private FilterViewer filterViewer;
+	private ShellDecorator fShellDecorator;
 	
-	public FilterDialog(Shell parentShell, FileFilterDelegate fileFilter) {
-		super(parentShell);
-		setShellStyle(SWT.BORDER | SWT.CLOSE | SWT.MAX | SWT.RESIZE);
+	public FilterDialog(String id,Shell parentShell, FileFilterDelegate fileFilter) {
+		super(FileManagerActivator.getDefault(),FilterDialog.class.getName()+id,parentShell);
+		setShellStyle( SWT.RESIZE | SWT.TOOL);
 
 		this.fileFilter = fileFilter;
 	}
-
+	
 	/**
 	 * Create contents of the dialog.
 	 * @param parent
@@ -53,8 +56,13 @@ public class FilterDialog extends Dialog {
 		filterViewer = new FilterViewer(container,fileFilter);
 		Composite composite=filterViewer.getFilterView();
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		fShellDecorator = new ShellDecorator(getShell());
+		fShellDecorator.hookListener(container,parent);
+		
 		return container;
 	}
+	
 
 	/**
 	 * Create contents of the button bar.
@@ -63,7 +71,7 @@ public class FilterDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-				true);
+				true);//IDialogConstants.CLOSE_ID
 		createButton(parent, IDialogConstants.CANCEL_ID,
 				IDialogConstants.CANCEL_LABEL, false);
 	}

@@ -36,6 +36,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		super(configurer);
 	}
 
+	
 	@Override
 	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
 		return JeeleeWorkbench.getInstance().createActionBarAdvisor(configurer);

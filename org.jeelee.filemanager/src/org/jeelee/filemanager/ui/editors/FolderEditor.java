@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.internal.ui.javaeditor.breadcrumb.BreadcrumbViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -178,6 +179,8 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 							return;
 						}
 						fTableViewer.setInput(result);
+						updateComparator();
+						getBean().firePropertyChanged(REFRESHED_PROPERTY, null, null);
 					}
 				});
 
@@ -185,16 +188,21 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 			}
 		});
 	}
+	
+	private void updateComparator() {
+		((FileViewerComparator)fTableViewer.getComparator()).update();
+	}
+	
 	@Override
 	public void refresh() {
-		JobRunner.runShortUserJob(new Job(r.getString(Messages.REFRESH)) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+//		JobRunner.runShortUserJob(new Job(r.getString(Messages.REFRESH)) {
+//			@Override
+//			protected IStatus run(IProgressMonitor monitor) {
 				fileFilter.getSource().refresh();
-				getBean().firePropertyChanged(REFRESHED_PROPERTY, null, null);
-				return Status.OK_STATUS;
-			}
-		});
+//				getBean().firePropertyChanged(REFRESHED_PROPERTY, null, null);
+//				return Status.OK_STATUS;
+//			}
+//		});
 	}
 
 
@@ -260,20 +268,6 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		
 		createPathControl(parent);
 		createSearchText(parent);
-		
-		Button btnFilter = new Button(parent, SWT.NONE);
-		btnFilter.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (filterDialog != null) {
-					filterDialog.close();
-				}
-				filterDialog = new FilterDialog(getShell(), fileFilter);
-				filterDialog.open();
-			}
-		});
-		btnFilter.setImage(ResourceManager.getPluginImage("org.jeelee.filemanager", "icons/filter.gif"));
-
 	}
 
 
@@ -411,7 +405,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 					return;
 				}
 	
-				if (e.keyCode == SWT.CR) {
+				if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 					fileFilter.setKeyword(keyword);
 				}
 				
@@ -423,6 +417,23 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 				}
 			}
 		});
+		
+		
+		
+		Button btnFilter = new Button(parent, SWT.NONE);
+		btnFilter.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (filterDialog == null || filterDialog.getShell()==null) {
+					filterDialog = new FilterDialog(FolderEditor.class.getName()+fileFilter.getSource().toString(),getShell(), fileFilter);
+					filterDialog.open();
+					return;
+				}
+				filterDialog.getShell().setActive();
+				
+			}
+		});
+		btnFilter.setImage(ResourceManager.getPluginImage("org.jeelee.filemanager", "icons/filter.gif"));
 	}
 
 
@@ -449,8 +460,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 			}
 		});
 		fTableViewer.setContentProvider(new DirectoryTableContentProvider(fTableViewer,fileFilter));
-		fTableViewer.setComparator(new FileViewerComparator());
-		//		tableViewer.setUseHashlookup(true);
+		//		tableViewer.setUseHashlookup(true); 
 
 		fTableViewer.setCellEditors(new CellEditor[]{
 				new TextCellEditor(fTableViewer.getTable(), SWT.BORDER) });
@@ -584,6 +594,8 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		});
 		
 		fPathProvider = new ViewerPathProvider(fTableViewer);
+		fTableViewer.setComparator(new FileViewerComparator(fTableViewer));
+
 	}
 	private Object fPreviousSelection = null;
 	private int selectionTimes =0;
@@ -654,6 +666,8 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 				return Status.OK_STATUS;
 			}
 		});
+		
+		updateComparator();
 	}
 
 	private FileDelegate getFileFromInput(){
@@ -677,13 +691,28 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	private Action fUpAction = new JFaceAction(Messages.UP, FileManagerActivator.RESOURCES){
 		@Override
 		public void run() {
-			updateInput(new FileResourceInput(((FileResourceInput)getEditorInput()).getFileDelegate().getRealParent(), false));
+			final FileDelegate source = ((FileResourceInput)getEditorInput()).getFileDelegate();
+			FolderEditor.this.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					fTableViewer.setSelection(new StructuredSelection(source));
+					FolderEditor.this.removePropertyChangeListener(this);
+				}
+			});
+			updateInput(new FileResourceInput(source.getRealParent(), false));
 		}
 	};
 	private Action fBackAcion =new JFaceAction(Messages.BACK, FileManagerActivator.RESOURCES){
 		@Override
 		public void run() {
-			FileDelegate oldDelegate = history.pop();
+			final FileDelegate oldDelegate = history.pop();
+			FolderEditor.this.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					fTableViewer.setSelection(new StructuredSelection(oldDelegate));
+					FolderEditor.this.removePropertyChangeListener(this);
+				}
+			});
 			updateInput(new FileResourceInput(oldDelegate,false),false);
 		}
 	};
@@ -740,7 +769,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 
 	@Override
 	public void setSelection(ISelection selection) {
-		fTableViewer.setSelection(selection);
+		fTableViewer.setSelection(selection,false);
 	}
 
 	private AbstractBean getBean() {
@@ -905,11 +934,35 @@ class DirectoryTableContentProvider implements IStructuredContentProvider {
 	@Override
 	public void dispose() {
 	}
+	
 
 
 }
 
 class FileViewerComparator extends ViewerColumnComparator{
+	private IDialogSettings settings ;
+	private TableViewer viewer;
+	
+	public FileViewerComparator(CheckboxTableViewer tableViewer) {
+		settings = FileManagerActivator.getDefault().getDialogSettings().getSection(FolderEditor.class.getName()+FileViewerComparator.class.getName());
+		viewer =tableViewer;
+		if(settings==null){
+			settings = FileManagerActivator.getDefault().getDialogSettings().addNewSection(FolderEditor.class.getName()+FileViewerComparator.class.getName());
+			remember(0, 0);
+		}else {
+			direction=settings.getInt("direction");
+			propertyIndex = settings.getInt("index");
+		}
+		
+	}
+	
+	
+	
+	public void update() {
+	}
+
+
+
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		if(direction==0){
@@ -921,7 +974,8 @@ class FileViewerComparator extends ViewerColumnComparator{
 		int rc =0;
 		switch (propertyIndex) {
 		case 0:
-			rc = f1.getName().compareTo(f2.getName());
+//			rc = f1.getName().compareTo(f2.getName());
+			rc=compareName(f1.getName(),f2.getName());
 			break;
 		case 1:
 			rc = Long.compare(f1.getLastModifiedTime(), f2.getLastModifiedTime());
@@ -940,8 +994,64 @@ class FileViewerComparator extends ViewerColumnComparator{
 		if (direction == DESCENDING) {
 			rc = -rc;
 		}
-
+		remember(direction,propertyIndex);
 		return rc;
+	}
+
+	private void remember(int direction, int propertyIndex) {
+		settings.put("direction", direction);//$NON-NLS-1$
+		settings.put("index", propertyIndex);//$NON-NLS-1$
+	}
+
+	private int compareName(String name, String name2) {
+		boolean ignoreCase=true;
+		
+		if(ignoreCase){
+			name = name.toLowerCase();
+			name2 = name2.toLowerCase();
+		}
+		for(int i=0;i<name.length();i++){
+			if (i == name.length() && i < name2.length()) {
+                return -1;
+            } else if ( i < name.length() && i == name2.length() ) {
+                return 1;
+            }
+			
+			char ch1 = name.charAt(i);
+            char ch2 = name2.charAt(i);
+            
+            if (ch1 >= '0' && ch2 <= '9') {
+                int i1 = getNumber(name.substring(i));
+                int i2 = getNumber(name2.substring(i));
+                if (i1 == i2) {
+                    continue;
+                } else {
+                    return i1 - i2;
+                }
+            } else if (ch1 != ch2) {
+                return ch1 - ch2;
+            }
+
+		}
+		
+		
+		return 0;
+	}
+
+	private int getNumber(String str) {
+		int num = Integer.MAX_VALUE;
+        int bits = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) >= '0' && str.charAt(i) <= '9') {
+                bits++;
+            } else {
+                break;
+            }
+        }
+        if (bits > 0) {
+            num = Integer.parseInt(str.substring(0, bits));
+        }
+        return num;
 	}
 }
 

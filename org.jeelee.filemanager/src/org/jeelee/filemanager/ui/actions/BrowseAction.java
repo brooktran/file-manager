@@ -1,5 +1,6 @@
 package org.jeelee.filemanager.ui.actions;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.preferences.IPreferenceConstants;
 import org.jeelee.filemanager.ui.views.model.FileExplorer;
@@ -18,6 +19,8 @@ public class BrowseAction extends FileSystemAction {
 				);
 	}
 
-
+	@Override
+	public void selectionChanged(IStructuredSelection selection) {
+	}
 	
 }

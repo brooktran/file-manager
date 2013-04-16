@@ -131,6 +131,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 					count++;
 				}
 				addChildren(fileList);
+				ds.close();
 			}
 		} catch (IOException e) {
 			success = false;
@@ -144,7 +145,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 
 
 	public void refresh() {
-		if (isResolving()) {
+		if (isResolving() || source==null) {
 			return;
 		}
 		
@@ -542,7 +543,7 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 	@Override
 	public boolean equals(Object obj) {
 		FileDelegate other = ObjectUtils.isBasicEquals(this, obj);
-		if(other==null){
+		if(other==null || getSource()==null){
 			return false;
 		}
 		return getSource().equals(other.getSource());
@@ -552,20 +553,40 @@ public class FileDelegate extends GenericPlatformObject<Path,FileDelegate>{
 	public void delete() throws IOException {
 		if (isDirectory()) {
 			deleteDirectory(source);
+		}else {
+			Files.deleteIfExists(source);
 		}
-		Files.deleteIfExists(source);
 	}
 
 
 	private void deleteDirectory(Path source) throws IOException {
+//		File[] children = file.listFiles();
+//		for(File f:children){
+//			if(f.isDirectory()){
+//				deleteDirectory(f);
+//			}
+//			f.deleteOnExit();
+//		}
+//		file.deleteOnExit();
+		
+		
 		DirectoryStream<Path> ds = Files.newDirectoryStream(source);
-
 		for (Path child : ds) {
 			if(Files.isDirectory(child)){
 				deleteDirectory(child);
 			}
 			Files.deleteIfExists(child);
 		}
+		ds.close();
+		Files.deleteIfExists(source);
+
+		setSource(null);
+		clearChildren();
+		
+		if(getParent()!=null){
+			getParent().remove(this);
+		}
+		
 	}
 
 

@@ -46,6 +46,7 @@ import org.jeelee.filemanager.core.operation.PathProvider;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
 import org.jeelee.filemanager.ui.actions.GlobalFileExplorerActionGroupHelper;
+import org.jeelee.filemanager.ui.actions.RefreshAction;
 import org.jeelee.filemanager.ui.dialog.FilterDialog;
 import org.jeelee.filemanager.ui.views.model.FileCounterLabelProvider;
 import org.jeelee.filemanager.ui.views.model.FileDelegateCellModifier;
@@ -63,6 +64,7 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 	private PathProvider pathProvider;
 	
 	private AbstractBean bean;
+	private GlobalFileExplorerActionGroupHelper fActionHelper;
 
 	public GlobalFileExplorerView() {
 		fileFilter = new FileFilterDelegate();//TODO get from preference
@@ -151,6 +153,8 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 		});
 	}
 	private void hookToolbar() {
+		fActionHelper = new GlobalFileExplorerActionGroupHelper(this);
+
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager toolBarManager = bars.getToolBarManager();
 		IMenuManager menuManager = bars.getMenuManager();
@@ -160,19 +164,27 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 
 		toolBarManager.add(new GroupMarker(
 				IWorkbenchActionConstants.MB_ADDITIONS));
+		toolBarManager.add(fActionHelper.findAction(RefreshAction.ID));
 		toolBarManager.add(
 				new JFaceAction(Messages.FILTER, FileManagerActivator.RESOURCES){
+					private FilterDialog dialog;
+					
 					@Override
 					public void run() {
-						FilterDialog dialog = new FilterDialog(getSite().getShell(),fileFilter);
-						dialog.open();
+						if (dialog == null || dialog.getShell()==null) {
+							dialog = new FilterDialog(GlobalFileExplorerView.class.getName(),getSite().getShell(),fileFilter);
+							dialog.open();
+							return;
+						}
+						dialog.getShell().setActive();
 					}
 				});
 
 		DrillDownAdapter drillDownAdapter = new DrillDownAdapter(viewer);
 		drillDownAdapter.addNavigationActions(menuManager);
 		drillDownAdapter.addNavigationActions(toolBarManager);
-		new GlobalFileExplorerActionGroupHelper(this);
+		
+
 	}
 
 	@Override
@@ -202,25 +214,33 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 		if(selection.isEmpty()){
 			return;
 		}
-		Job job=new Job(FileManagerActivator.RESOURCES.getString(Messages.REFRESH)) {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				@SuppressWarnings("unchecked")
+//		Job job=new Job(FileManagerActivator.RESOURCES.getString(Messages.REFRESH)) {
+//			@Override
+//			protected IStatus run(IProgressMonitor monitor) {
+//				@SuppressWarnings("unchecked")
 				List<FileDelegate> selectedFiles=selection.toList();
-				for(final FileDelegate file:selectedFiles){
+				for(FileDelegate file:selectedFiles){
+					if(file.getSource()==null&& file.getParent()!=null){
+						file=file.getParent();
+					}
 						file.refresh();
-						viewer.getControl().getDisplay().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								viewer.refresh(file);
-							}
-						});
+						refreshViewer(file);
+						
 				}
 				
-				return Status.OK_STATUS;
+//				return Status.OK_STATUS;
+//			}
+//		};
+//		JobRunner.runShortUserJob(job);		
+	}
+
+	private void refreshViewer(final FileDelegate file) {
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				viewer.refresh(file);
 			}
-		};
-		JobRunner.runShortUserJob(job);		
+		});		
 	}
 
 	@Override

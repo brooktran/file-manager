@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,6 +70,7 @@ import org.jeelee.filemanager.core.filters.SuffixCatalog;
 import org.jeelee.filemanager.core.filters.SuffixFilter;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
+import org.jeelee.filemanager.ui.dialog.ShellDecorator;
 import org.jeelee.utils.DefaultPair;
 import org.jeelee.utils.JobRunner;
 import org.jeelee.utils.PluginResources;
@@ -108,6 +110,9 @@ public class FilterViewer {
 	private List<Button> sizeButtons;
 	private Composite suffixComposite;
 	
+//	private ShellDecorator fShellDecorator;
+//	private List<Composite> fShellComposites=new LinkedList<>();
+	
 	
 	/**
 	 * @wbp.parser.constructor
@@ -126,6 +131,8 @@ public class FilterViewer {
 		this.fileFilter = fileFilter;
 		viewerComposite = createFilterView(compositeStyle,
 				checkStyle(filterStyle));
+		
+//		fShellComposites.add(viewerComposite);/
 
 		fileFilter.removePropertyChangeListener(listener);
 		fileFilter.addPropertyChangeListener(listener);
@@ -136,7 +143,9 @@ public class FilterViewer {
 				fileFilter.removePropertyChangeListener(listener);
 			}
 		});
+		
 	}
+	
 
 	private int checkStyle(int filterStyle) {
 		return filterStyle & (ALL);
@@ -147,43 +156,49 @@ public class FilterViewer {
 	}
 
 	public Composite createFilterView(int style, int filterStyle) {
-			int columnNum = 3;
-			// parent.setLayout(new FillLayout());
-			final ScrolledComposite scrolledComposite = new ScrolledComposite(
-					parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-			scrolledComposite.setExpandHorizontal(true);
-			scrolledComposite.setExpandVertical(true);
-			container_1 = new Composite(scrolledComposite, SWT.NONE);
-			container_1.setLayout(new GridLayout(1, false));
-	
-	//		createSearchArea(columnNum, container_1);
-	//		createStatisticsArea(columnNum, container_1);
-			createControl(columnNum, container_1);
-	
-			scrolledComposite.setContent(container_1);
-			scrolledComposite.setMinWidth(0);
-			// scrolledComposite.setSize(container.computeSize(SWT.DEFAULT,
-					// SWT.DEFAULT));
-			
-			container_1.addControlListener(new ControlAdapter() {
-				int	width	= -1;
-	
-				@Override
-				public void controlResized(ControlEvent e) {
-					int newWidth = container_1.getSize().x;
-					if (newWidth != width) {
-						scrolledComposite.setMinHeight(container_1.computeSize(
-								newWidth, SWT.DEFAULT).y);
-						width = newWidth;
-					}
-					// Rectangle r = container.getClientArea();
-					// scrolledComposite.setMinSize(container.computeSize(r.width,
-					// SWT.DEFAULT));
-				};
-			});
-			scrolledComposite.setSize(new Point(329, 312));
-			return scrolledComposite;
-		}
+		int columnNum = 3;
+		// parent.setLayout(new FillLayout());
+		
+		createSearchText(parent);
+
+		
+		
+		final ScrolledComposite scrolledComposite = new ScrolledComposite(
+				parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
+		container_1 = new Composite(scrolledComposite, SWT.NONE);
+		container_1.setLayout(new GridLayout(1, false));
+		
+
+//		createSearchArea(columnNum, container_1);
+//		createStatisticsArea(columnNum, container_1);
+		createControl(columnNum, container_1);
+
+		scrolledComposite.setContent(container_1);
+		scrolledComposite.setMinWidth(0);
+		// scrolledComposite.setSize(container.computeSize(SWT.DEFAULT,
+				// SWT.DEFAULT));
+		
+		container_1.addControlListener(new ControlAdapter() {
+			int	width	= -1;
+
+			@Override
+			public void controlResized(ControlEvent e) {
+				int newWidth = container_1.getSize().x;
+				if (newWidth != width) {
+					scrolledComposite.setMinHeight(container_1.computeSize(
+							newWidth, SWT.DEFAULT).y);
+					width = newWidth;
+				}
+				// Rectangle r = container.getClientArea();
+				// scrolledComposite.setMinSize(container.computeSize(r.width,
+				// SWT.DEFAULT));
+			};
+		});
+		scrolledComposite.setSize(new Point(329, 312));
+		return scrolledComposite;
+	}
 
 	public static void createTypeFilterView(Composite parent2) {//XXX for test
 		Button button = new Button(parent2, SWT.NONE);
@@ -214,17 +229,14 @@ public class FilterViewer {
 		creteDateFilterView(tabFolder);
 		createAdvancedFilterView(tabFolder);
 		createOtherFilterView(tabFolder);
+		
+		
+//		fShellComposites.add(container);
+
 		// } //
 	}
 
-	private void createBasicFilterView(TabFolder tabFolder) {
-		TabItem basicItem = new TabItem(tabFolder, SWT.NONE); // basic filter
-		basicItem.setText(r.getString(Messages.BASIC));
-	
-		Composite basicComposite = new Composite(tabFolder, SWT.NONE);
-		basicItem.setControl(basicComposite);
-		basicComposite.setLayout(new GridLayout(1, false));
-	
+	private void createSearchText(Composite parent2) {
 		searchText= new Text(parent, SWT.BORDER | SWT.SEARCH );
 		searchText.setText(fileFilter.getKeyword());
 		searchText.setMessage(r.getString(Messages.SEARCH));
@@ -246,9 +258,17 @@ public class FilterViewer {
 		
 		searchText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
-		searchText.forceFocus();
+		searchText.forceFocus();		
+	}
 
-		
+	private void createBasicFilterView(TabFolder tabFolder) {
+		TabItem basicItem = new TabItem(tabFolder, SWT.NONE); // basic filter
+		basicItem.setText(r.getString(Messages.BASIC));
+	
+		Composite basicComposite = new Composite(tabFolder, SWT.NONE);
+		basicItem.setControl(basicComposite);
+		basicComposite.setLayout(new GridLayout(1, false));
+	
 		Composite composite_10_1 = new Composite(basicComposite, SWT.NONE);
 		composite_10_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		composite_10_1.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -948,6 +968,13 @@ public class FilterViewer {
 		ToolItem tltmSetAsDefault = new ToolItem(toolBar, SWT.NONE);
 		tltmSetAsDefault.setText("set as default");
 	}
+
+//	public void setDecorator(ShellDecorator shellDecorator) {
+//		fShellDecorator=shellDecorator;
+//	}
+//	public void configDecorator(){
+//		fShellDecorator.hookListener((Composite[]) fShellComposites.toArray());
+//	}
 }
 
 class SimpleValue {
