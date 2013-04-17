@@ -3,6 +3,7 @@ package org.jeelee.filemanager.core.filters;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.jeelee.filemanager.core.Scope;
 import org.jeelee.filemanager.ui.FileManagerActivator;
+import org.jeelee.utils.AppLogging;
 
 
 public class CatalogFactory {
@@ -44,7 +45,11 @@ public class CatalogFactory {
 			String id = catalogIDs[i];
 			ScopeCatalog c=new ScopeCatalog(id);
 			
-			String[] values = pref.getString("scope."+id+".value").split(",");//$NON-NLS-1$ //$NON-NLS-2$
+			String string = pref.getString("scope."+id+".value");//$NON-NLS-1$ //$NON-NLS-2$
+			if(string.trim().isEmpty()){
+				continue;
+			}
+			String[] values = string.split(",");//$NON-NLS-1$ 
 			Scope scope=new Scope(sizeToLong(values[0]),
 					sizeToLong(values[1]));
 			c.setScope(scope);
@@ -54,14 +59,18 @@ public class CatalogFactory {
 	}
 
 	private static long sizeToLong(String size) {
-		long value = Long.parseLong(size);
-		if (value == -1) {
+		try {
+			long value = Long.parseLong(size);
+			if (value == -1) {
+				return  Long.MAX_VALUE;
+			} else if (value == -2) {
+				return Long.MIN_VALUE;
+			} 
+			return value;
+		} catch (Exception e) {
+			AppLogging.handleException(e);
 			return  Long.MAX_VALUE;
-		} else if (value == -2) {
-			return Long.MIN_VALUE;
-		} 
-		return value;
-
+		}
 	}
 
 	

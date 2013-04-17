@@ -163,6 +163,7 @@ See the  GNU General Public License  for more details.
       <plugin id="org.hamcrest.core"/>
       <plugin id="org.jeelee.core"/>
       <plugin id="org.jeelee.core.ui"/>
+      <plugin id="org.jeelee.dependence"/>
       <plugin id="org.jeelee.filemanager"/>
       <plugin id="org.jeelee.filemanager.help.nl1" fragment="true"/>
       <plugin id="org.jeelee.regex"/>
@@ -179,7 +180,6 @@ See the  GNU General Public License  for more details.
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="3" />
-      <plugin id="org.jeelee.filemanager" autoStart="true" startLevel="4" />
    </configurations>
 
 </product>

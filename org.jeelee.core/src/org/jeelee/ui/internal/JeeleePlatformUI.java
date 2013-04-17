@@ -13,12 +13,13 @@ public class JeeleePlatformUI {
 		if(AppLogging.isDebugLeaking()){
 			DeviceData data = new DeviceData();
 		    data.tracking = true;
-		    display = new Display(data);
 		    Sleak sleak = new Sleak();
-		    sleak.open();	
-		}else {
-			display =PlatformUI.createDisplay();
+		    sleak.open();
+		    display = new Display(data);
+		    return display;
 		}
+
+		display =PlatformUI.createDisplay();
 		return display;
 	}
 	

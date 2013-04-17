@@ -1,10 +1,26 @@
 Manifest-Version: 1.0
-Export-Package: org.jeelee.core,
+Export-Package: org.jeelee.core;
+  uses:="org.eclipse.jface.resource,
+   org.eclipse.ui.plugin,
+   org.osgi.framework,
+   org.jeelee.utils",
  org.jeelee.event,
- org.jeelee.ui.internal,
- org.jeelee.ui.preference,
- org.jeelee.ui.viewers.cell.editors,
- org.jeelee.utils
+ org.jeelee.ui.internal;
+  uses:="org.eclipse.jface.window,
+   org.eclipse.core.runtime,
+   org.eclipse.ui,
+   org.eclipse.swt.events,
+   org.eclipse.ui.actions,
+   org.eclipse.ui.plugin,
+   org.jeelee.event,
+   org.eclipse.jface.action,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.graphics,
+   org.eclipse.swt.widgets,
+   org.eclipse.jface.dialogs",
+ org.jeelee.ui.preference;uses:="org.eclipse.jface.preference,org.eclipse.swt.widgets",
+ org.jeelee.ui.viewers.cell.editors;uses:="org.eclipse.swt.events,org.eclipse.jface.viewers,org.eclipse.swt.widgets",
+ org.jeelee.utils;uses:="org.eclipse.swt.widgets"
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.7.101",
