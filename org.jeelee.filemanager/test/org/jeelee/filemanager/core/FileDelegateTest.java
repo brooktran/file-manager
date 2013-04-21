@@ -9,7 +9,11 @@ import org.junit.Test;
 
 public class FileDelegateTest {
 
-
+	@Test
+	public void testname() throws Exception {
+		System.out.println(System.getProperties());
+	}
+	
 	@Test
 	public void testDelete() throws IOException, InterruptedException {
 		FileDelegate file = new FileDelegate("H:/system/desktop/New Folder/New Folder/New Folder");

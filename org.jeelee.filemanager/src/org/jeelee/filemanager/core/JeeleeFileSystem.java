@@ -3,6 +3,7 @@ package org.jeelee.filemanager.core;
 import java.awt.image.BufferedImage;
 import java.awt.image.DirectColorModel;
 import java.io.File;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileSystemView;
@@ -13,7 +14,9 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
+import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.utils.AppLogging;
+import org.jeelee.utils.ArrayUtils;
 
 public abstract class JeeleeFileSystem {
 	private static FileSystemView fileSystemView = FileSystemView.getFileSystemView();
@@ -71,6 +74,23 @@ public abstract class JeeleeFileSystem {
 	public static String getSystemTypeDescription(File file) {
 		return fileSystemView.getSystemTypeDescription(file);
 	}
+	
+	private static boolean isNativeSpecialFile(File file) {
+		if(file.isDirectory()){
+			return false;
+		}
+		
+		String filename = file.getName();
+		int p = filename.lastIndexOf(".");
+		if(p>0 && p<filename.length()-1){
+			String os=System.getProperty("os.name").toLowerCase();//$NON-NLS-1$
+			String[] suffixes=FileManagerActivator.getDefault().getPreferenceStore().getString("special.icon."+os.substring(0,3)).split(",");
+			return ArrayUtils.contains(suffixes, filename.substring(p+1));
+		}else {
+			return false;
+		}
+	}
+
 
 	public static String getImageKey(File file){
 		if(hasSpecialIcon(file)){
@@ -100,10 +120,9 @@ public abstract class JeeleeFileSystem {
 
 	private static boolean hasSpecialIcon(File file){
 		return  isComputerNode(file)|| 
-				isFileSystemRoot(file) || isDrive(file);
+				isFileSystemRoot(file) || isDrive(file) || isNativeSpecialFile(file);
 	}
-
-
+	
 	public static Image getSWTImageFromSwing(ImageIcon imageIcon){
 		try {
 			if (imageIcon!=null && imageIcon.getImage() instanceof BufferedImage){

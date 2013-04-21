@@ -12,4 +12,6 @@ public interface IPreferenceConstants {
 	String	NEVER_PROMPT_ON_OPEN_MUTIL_FILES	= "open.mutil.file.prompt";
 //	String	MUTIL_FILE_EXECUTE_ORDER	= "mutil.file.execute.order";
 	String	MUTIL_FILE_ORDER_CURRENT	= "open.mutil.file.order";
+	
+	
 }
