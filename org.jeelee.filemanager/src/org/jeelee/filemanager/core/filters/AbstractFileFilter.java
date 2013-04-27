@@ -10,7 +10,7 @@
  */
 package org.jeelee.filemanager.core.filters;
 
-import org.jeelee.event.AbstractBean;
+import org.jeelee.event.DefaultBean;
 
 /**
  * <B>AbstractFileFilter</B>
@@ -18,7 +18,7 @@ import org.jeelee.event.AbstractBean;
  * @author Brook Tran. Email: <a href="mailto:Brook.Tran.C@gmail.com">Brook.Tran.C@gmail.com</a>
  * @since org.jeelee.filemanager 2012-12-9 created
  */
-public abstract class AbstractFileFilter extends AbstractBean implements FileFilter{
+public abstract class AbstractFileFilter extends DefaultBean implements FileFilter{
 //	protected int operation = AND;
 //	@Override
 //	public int getOperation() {

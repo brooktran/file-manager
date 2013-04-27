@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -72,7 +71,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.jeelee.event.AbstractBean;
+import org.jeelee.event.DefaultBean;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
 import org.jeelee.filemanager.core.operation.PathProvider;
@@ -106,13 +105,13 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	private FileFilterDelegate fileFilter;
 	private CheckboxTableViewer fTableViewer ;
 	private BreadcrumbViewer fBbreadcrumbViewer;
-	private StyledText fPathText;
+	private Text fPathText;
 	
 	private FilterDialog filterDialog;
 	
 	private Stack<FileDelegate> history;
 	
-	private AbstractBean bean;
+	private DefaultBean bean;
 
 	private PropertyChangeListener refreshListener = new PropertyChangeListener() {
 		@Override
@@ -252,6 +251,8 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		hookToolbar();
 		createToolbar(toolbar);
 		resolveInput();
+		
+		getSite().setSelectionProvider(fTableViewer);
 	}
 
 
@@ -282,11 +283,40 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		stackLayout.marginWidth=0;
 		pathComposite.setLayout(stackLayout);
 		
-		// stack layout
-		fPathText = new StyledText(pathComposite,SWT.BORDER );
-		fPathText.setTopMargin(3);
-//		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		//		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+//		// stack layout
+//		fPathText = new StyledText(pathComposite,SWT.BORDER );
+//		fPathText.setTopMargin(3);
+////		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+//		//		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+//		fPathText.addKeyListener(new KeyAdapter() {
+//			@Override
+//			public void keyPressed(KeyEvent e) {
+//				if (e.keyCode == SWT.CR) {
+//					String path = fPathText.getText().trim();
+//					if (path.isEmpty()) {
+//						return;
+//					}
+//
+//					FileDelegate file = new FileDelegate(path);
+//					updateInput(new FileResourceInput(file, false));
+//				}
+//			}
+//		});
+//		fPathText.addFocusListener(new FocusListener() {
+//			@Override
+//			public void focusLost(FocusEvent e) {
+//				stackLayout.topControl = fBbreadcrumbViewer.getControl();
+//				pathComposite.layout();
+//			}
+//			
+//			@Override
+//			public void focusGained(FocusEvent e) {
+//			}
+//		});
+		
+		fPathText = new Text(pathComposite, SWT.BORDER );
+		fPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		fPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		fPathText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -297,6 +327,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 					}
 
 					FileDelegate file = new FileDelegate(path);
+					file.refresh();
 					updateInput(new FileResourceInput(file, false));
 				}
 			}
@@ -347,6 +378,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		fBbreadcrumbViewer.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
+				fPathText.setText(fileFilter.getSource().getAbsolutePath());
 				stackLayout.topControl =fPathText;
 				fPathText.selectAll();
 				pathComposite.layout();
@@ -420,26 +452,45 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 				}
 			}
 		});
-		
-		
-		
+//		searchText.addMouseTrackListener(new MouseTrackListener() {
+//			@Override
+//			public void mouseHover(MouseEvent e) {
+//			}
+//			@Override
+//			public void mouseExit(MouseEvent e) {
+//				
+//			}
+//			@Override
+//			public void mouseEnter(MouseEvent e) {
+//				searchText.forceFocus();
+//				openFilterDialog();
+//			}
+//		});
+
 		Button btnFilter = new Button(parent, SWT.NONE);
 		btnFilter.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (filterDialog == null || filterDialog.getShell()==null) {
-					filterDialog = new FilterDialog(FolderEditor.class.getName()+fileFilter.getSource().toString(),getShell(), fileFilter);
-					filterDialog.open();
-					return;
-				}
-				filterDialog.getShell().setActive();
-				
+				openFilterDialog();
 			}
+			
 		});
 		btnFilter.setImage(ResourceManager.getPluginImage("org.jeelee.filemanager", "icons/filter.gif"));
 	}
 
-
+	private void openFilterDialog() {
+		if (filterDialog == null || filterDialog.getShell()==null || filterDialog.getShell().isDisposed()) {
+			if(filterDialog!=null){
+				filterDialog.close();
+				filterDialog = null;
+			}
+			filterDialog = new FilterDialog(FolderEditor.class.getName()+fileFilter.getSource().toString(),getShell(), fileFilter);
+			filterDialog.open();
+			return;
+		}
+		filterDialog.getShell().setActive();
+	}
+	
 	private void createDetailsView(Composite parent) {
 		fTableViewer = TableViewerFactory.createCheckboxTableViewer(parent,false,false ,
 				SWT.BORDER 
@@ -462,7 +513,14 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
 		});
-		fTableViewer.setContentProvider(new DirectoryTableContentProvider(fTableViewer,fileFilter));
+		DirectoryTableContentProvider contentProvider = new DirectoryTableContentProvider(fTableViewer,fileFilter);
+		fTableViewer.setContentProvider(contentProvider);
+		contentProvider.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				bean.firePropertyChanged(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+			}
+		});
 		//		tableViewer.setUseHashlookup(true); 
 
 		fTableViewer.setCellEditors(new CellEditor[]{
@@ -692,16 +750,23 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		return fileFilter.getSource();
 	}
 	private Action fUpAction = new JFaceAction(Messages.UP, FileManagerActivator.RESOURCES){
+		final PropertyChangeListener upListener = new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				getShell().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						final FileDelegate source = ((FileResourceInput)getEditorInput()).getFileDelegate();
+						fTableViewer.setSelection(new StructuredSelection(source));
+					}
+				});
+				FolderEditor.this.removePropertyChangeListener(upListener);
+			}
+		};
 		@Override
 		public void run() {
+			FolderEditor.this.addPropertyChangeListener(upListener);
 			final FileDelegate source = ((FileResourceInput)getEditorInput()).getFileDelegate();
-			FolderEditor.this.addPropertyChangeListener(new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					fTableViewer.setSelection(new StructuredSelection(source));
-					FolderEditor.this.removePropertyChangeListener(this);
-				}
-			});
 			updateInput(new FileResourceInput(source.getRealParent(), false));
 		}
 	};
@@ -775,9 +840,9 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 		fTableViewer.setSelection(selection,false);
 	}
 
-	private AbstractBean getBean() {
+	private DefaultBean getBean() {
 		if(bean == null){
-			bean = new AbstractBean();
+			bean = new DefaultBean();
 		}
 		return bean;
 	}
@@ -857,7 +922,7 @@ public class FolderEditor extends EditorPart implements FileExplorer{
 	}
 }
 
-class DirectoryTableContentProvider implements IStructuredContentProvider {
+class DirectoryTableContentProvider extends DefaultBean implements IStructuredContentProvider {
 	private TableViewer tableViewer ;
 	private Job resolveJob;
 	@SuppressWarnings("unused")
@@ -911,9 +976,11 @@ class DirectoryTableContentProvider implements IStructuredContentProvider {
 								@Override
 								public void run() {
 									tableViewer.update(child, null);
+									firePropertyChanged(Messages.UPDATE, null, child);
 								}
 							});
 						}
+						firePropertyChanged(Messages.REFRESH, null, child);
 						monitor.worked(i);
 					}
 					return Status.OK_STATUS;

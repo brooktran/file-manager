@@ -28,7 +28,7 @@ import java.beans.PropertyChangeSupport;
  * <br>1.1 2004-01-18
  * <br>1.0 2001-08-04
  */
-public class AbstractBean extends Object implements java.io.Serializable, Cloneable,PropertySupport {
+public class DefaultBean implements java.io.Serializable, Cloneable,PropertySupport {
 	protected PropertyChangeSupport propertySupport = new PropertyChangeSupport(this);
 
 	@Override
@@ -40,10 +40,10 @@ public class AbstractBean extends Object implements java.io.Serializable, Clonea
 		propertySupport.addPropertyChangeListener( propertyName, listener);
 	}
 	@Override
-	public AbstractBean clone() {
-		AbstractBean that;
+	public DefaultBean clone() {
+		DefaultBean that;
 		try {
-			that = (AbstractBean) super.clone();
+			that = (DefaultBean) super.clone();
 		} catch (CloneNotSupportedException ex) {
 			InternalError error =  new InternalError("Clone failed");
 			error.initCause(ex);

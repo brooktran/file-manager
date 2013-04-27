@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,7 +69,6 @@ import org.jeelee.filemanager.core.filters.SuffixCatalog;
 import org.jeelee.filemanager.core.filters.SuffixFilter;
 import org.jeelee.filemanager.ui.FileManagerActivator;
 import org.jeelee.filemanager.ui.Messages;
-import org.jeelee.filemanager.ui.dialog.ShellDecorator;
 import org.jeelee.utils.DefaultPair;
 import org.jeelee.utils.JobRunner;
 import org.jeelee.utils.PluginResources;
@@ -109,9 +107,6 @@ public class FilterViewer {
 
 	private List<Button> sizeButtons;
 	private Composite suffixComposite;
-	
-//	private ShellDecorator fShellDecorator;
-//	private List<Composite> fShellComposites=new LinkedList<>();
 	
 	
 	/**
@@ -969,12 +964,6 @@ public class FilterViewer {
 		tltmSetAsDefault.setText("set as default");
 	}
 
-//	public void setDecorator(ShellDecorator shellDecorator) {
-//		fShellDecorator=shellDecorator;
-//	}
-//	public void configDecorator(){
-//		fShellDecorator.hookListener((Composite[]) fShellComposites.toArray());
-//	}
 }
 
 class SimpleValue {

@@ -38,7 +38,7 @@ import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
-import org.jeelee.event.AbstractBean;
+import org.jeelee.event.DefaultBean;
 import org.jeelee.filemanager.core.FileDelegate;
 import org.jeelee.filemanager.core.JeeleeFileSystem;
 import org.jeelee.filemanager.core.filters.FileFilterDelegate;
@@ -63,7 +63,7 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 	private TreeViewer viewer;
 	private PathProvider pathProvider;
 	
-	private AbstractBean bean;
+	private DefaultBean bean = new DefaultBean();
 	private GlobalFileExplorerActionGroupHelper fActionHelper;
 
 	public GlobalFileExplorerView() {
@@ -294,7 +294,7 @@ public class GlobalFileExplorerView extends ViewPart implements FileExplorer{
 			PropertyChangeListener listener) {
 		getBean().removePropertyChangeListener(propertyName, listener);
 	}
-	public AbstractBean getBean() {
+	public DefaultBean getBean() {
 		return bean;
 	}
 	

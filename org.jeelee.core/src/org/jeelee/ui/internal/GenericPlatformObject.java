@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.jeelee.event.AbstractBean;
+import org.jeelee.event.DefaultBean;
 import org.jeelee.event.PropertySupport;
 
 @SuppressWarnings("rawtypes")
@@ -17,7 +17,7 @@ public class GenericPlatformObject<T, R extends GenericPlatformObject> extends P
   protected T source;
   private R parent;
   protected final List<R> children;
-  private AbstractBean beanSupport = new AbstractBean();
+  private DefaultBean beanSupport = new DefaultBean();
 
 public GenericPlatformObject()
   {
